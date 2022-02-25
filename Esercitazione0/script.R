@@ -85,10 +85,10 @@ qDfAdult <- qDfAdult[keepVect]
 #Definisco una funzione per "pulizia"
 
 #FUNZIONE:
-#ARGUMENTS: vettore - un vettore
+#ARGUMENTS: vettore - un vettore, nomeX - nome da dare alla coordinata x, il nome della colonna del dataframe va bene
 #RETURNS: void
 #UTILIZZO: Prende un vettore variabile (factor, a più livelli), se stampa una tabella di contingenza per la freq assoluta, quella relativa (e quella rel percentuale), e stampa un diagramma a barre (non cambia nulla tra i tipi di dati in quanto separati da una costante coumne)
-printAbsRelHist <-  function (vettore){
+printAbsRelHist <-  function (vettore, nomeX){
   aWcTable <- table(vettore)
   print(vettore)
   #per contare la popolazione, osservo quale sia la lunghezza del vettore (freq rel = freq ass / popolazione)
@@ -99,7 +99,7 @@ printAbsRelHist <-  function (vettore){
   print(percWcTable)
   
   #Stampo l'istogramma del dataset dato
-  barplot(aWcTable, xlab = "Classe lavorativa", ylab = "Numero di rilevazioni",las=2)
+  barplot(aWcTable, xlab = nomeX, ylab = "Numero di rilevazioni",las=2)
   }
 
 #In questo caso in particolare seguo un processo più tedioso per workclass, mentre itero per stampare le altre
@@ -114,6 +114,6 @@ printAbsRelHist(naOmittedWc)
 for(i in colnames(qDfAdult)){
   #Se non è workclass, che abbiamo già plottato
   if(i != "workclass"){
-    printAbsRelHist(qDfAdult[[i]])
+    printAbsRelHist(qDfAdult[[i]], i)
   }
 }

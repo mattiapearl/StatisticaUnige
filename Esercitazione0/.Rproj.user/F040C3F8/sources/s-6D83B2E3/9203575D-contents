@@ -85,7 +85,7 @@ qDfAdult <- qDfAdult[keepVect]
 #Definisco una funzione per "pulizia"
 
 #FUNZIONE:
-#ARGUMENTS: vettore - un vettore
+#ARGUMENTS: vettore - un vettore, nomeX - nome da dare alla coordinata x, il nome della colonna del dataframe va bene
 #RETURNS: void
 #UTILIZZO: Prende un vettore variabile (factor, a più livelli), se stampa una tabella di contingenza per la freq assoluta, quella relativa (e quella rel percentuale), e stampa un diagramma a barre (non cambia nulla tra i tipi di dati in quanto separati da una costante coumne)
 printAbsRelHist <-  function (vettore, nomeX){
