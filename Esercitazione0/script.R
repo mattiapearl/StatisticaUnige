@@ -90,14 +90,26 @@ qDfAdult <- qDfAdult[keepVect]
 #UTILIZZO: Prende un vettore variabile (factor, a più livelli), se stampa una tabella di contingenza per la freq assoluta, quella relativa (e quella rel percentuale), e stampa un diagramma a barre (non cambia nulla tra i tipi di dati in quanto separati da una costante coumne)
 printAbsRelHist <-  function (vettore, nomeX){
   aWcTable <- table(vettore)
-  print(vettore)
-  #per contare la popolazione, osservo quale sia la lunghezza del vettore (freq rel = freq ass / popolazione)
-  rWcTable <- aWcTable / length(vettore) 
-  print(rWcTable)
-  # Per sfizio la stampo anche in percentuale
-  percWcTable <-  rWcTable * 100
-  print(percWcTable)
+
+##Vecchia implementazione che non utilizzava prop.table  
+#  print(vettore)
+#  #per contare la popolazione, osservo quale sia la lunghezza del vettore (freq rel = freq ass / popolazione)
+#  rWcTable <- aWcTable / length(vettore) 
+#  print(rWcTable)
+#  # Per sfizio la stampo anche in percentuale
+#  percWcTable <-  rWcTable * 100
+#  print(percWcTable)
   
+##Nuova implementazione
+  #Relativo come "proportionate to the rest of the table": prop.table
+  rWcTable <- prop.table(aWcTable)
+  #Affianco le tabelle per colonna (prendo la freq relativa e quella rel perc con il round e il *100)
+  totalTable <- cbind(aWcTable,round(rWcTable,4),round(rWcTable*100,2))
+  #Nomi colonne
+  colnames(totalTable) <- c("Freq Assoluta", "Relativa", "Pecentuale")
+  #Stampa un "divisore". Il \n appended alla fine serve a mandare il cursore a nuova linea in cat. Con writelines non ci sarebbe il problema, con print non si potrebbe stampare su più righe
+  cat("\n\n######## \n", nomeX,"\n########", "\n")
+  print(totalTable)
   #Stampo l'istogramma del dataset dato
   barplot(aWcTable, xlab = nomeX, ylab = "Numero di rilevazioni",las=2)
   }
@@ -108,7 +120,7 @@ levels(dfAdult$workclass)
 #Tabella con frequenza assoluta (PER OTTENERE UNA PERCENTUALE CHE ARRIVA A 100 DEVO OMETTERE I VALORI NON PRESENTI)
 naOmittedWc <-  na.omit(dfAdult$workclass)
 #Caso workclass
-printAbsRelHist(naOmittedWc)
+printAbsRelHist(naOmittedWc, "workclass")
 
 #Restanti casi
 for(i in colnames(qDfAdult)){
