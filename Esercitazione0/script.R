@@ -92,17 +92,6 @@ head(fattori, 10)
 #UTILIZZO: Prende un vettore variabile (factor, a più livelli), se stampa una tabella di contingenza per la freq assoluta, quella relativa (e quella rel percentuale), e stampa un diagramma a barre (non cambia nulla tra i tipi di dati in quanto separati da una costante coumne)
 printAbsRelHist <-  function (vettore, nomeX){
   aWcTable <- table(vettore)
-
-##Vecchia implementazione che non utilizzava prop.table  
-#  print(vettore)
-#  #per contare la popolazione, osservo quale sia la lunghezza del vettore (freq rel = freq ass / popolazione)
-#  rWcTable <- aWcTable / length(vettore) 
-#  print(rWcTable)
-#  # Per sfizio la stampo anche in percentuale
-#  percWcTable <-  rWcTable * 100
-#  print(percWcTable)
-  
-##Nuova implementazione
   #Relativo come "proportionate to the rest of the table": prop.table
   rWcTable <- prop.table(aWcTable)
   #Affianco le tabelle per colonna (prendo la freq relativa e quella rel perc con il round e il *100)
