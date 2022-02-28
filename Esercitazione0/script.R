@@ -54,7 +54,7 @@ levels(dfAdult[["education"]])
 
 ##7
 #Creo un fattore ordinato per l'educazione
-education_rec <- ordered(x = dfAdult$education, levels =c("Preschool","1st-4th","5th-6th","9th","10th","11th","12th","HS-grad","Prof-school","Assoc-acdm","Assoc-voc","Some-college","Bachelors","Masters","Doctorate"))
+education_rec <- ordered(x = dfAdult$education, levels =c("Preschool","1st-4th","5th-6th","7th-8th","9th","10th","11th","12th","HS-grad","Prof-school","Assoc-acdm","Assoc-voc","Some-college","Bachelors","Masters","Doctorate"))
 #Non ho capito se serva sostituirlo ad education, ma in caso ecco quì:
 # dfAdult$education = education_rec
 
@@ -76,7 +76,9 @@ for (i in colnames(qDfAdult)) {
 #Ora creo un subset del dataframe qualitativo senza le colonne quantitative
 #Devo usare questo metodo e non subset perchè colnames mi da una stringa, quindi il vettore è composto di stringhe - mentre subset vuole il valore "non in stringa"
 qDfAdult <- qDfAdult[keepVect]
-
+#Lo rinomino fattori e visualizzo le prime righe
+fattori <- qDfAdult
+head(fattori, 10)
 
 ##9
 #(TABELLE)
@@ -108,11 +110,11 @@ printAbsRelHist <-  function (vettore, nomeX){
   #Nomi colonne
   colnames(totalTable) <- c("Freq Assoluta", "Relativa", "Pecentuale")
   #Stampa un "divisore". Il \n appended alla fine serve a mandare il cursore a nuova linea in cat. Con writelines non ci sarebbe il problema, con print non si potrebbe stampare su più righe
-  cat("\n\n######## \n", nomeX,"\n########", "\n")
-  print(totalTable)
+  cat("\n\n######## \n", nomeX,"\n########", "\n",totalTable, "\n")
   #Stampo l'istogramma del dataset dato
   barplot(aWcTable, xlab = nomeX, ylab = "Numero di rilevazioni",las=2)
   }
+
 
 #In questo caso in particolare seguo un processo più tedioso per workclass, mentre itero per stampare le altre
 #Osservo la variabile workclass (dalla tabella completa, in quanto na-omittendo rimuovo quelli senza capital gainis - ovvero chi non lavora, eliminando un importante dato dalla frequenza: i disoccupati)
@@ -129,3 +131,20 @@ for(i in colnames(qDfAdult)){
     printAbsRelHist(qDfAdult[[i]], i)
   }
 }
+
+##10
+#Tabella a due vie
+#Prendo il workclass originario affinchè abbia la stessa lunghezza di education rec
+vcErTable <- table(dfAdult$workclass,education_rec)
+cat("\n\n######## \n Workclass e Education\n########", "\n")
+print(vcErTable)
+
+##11
+#Anzi che ordinare secondo workclass che non è ordinata, ordino secondo education_rec
+orderedAdult <- cbind(dfAdult, education_rec)
+orderedAdult <- with(orderedAdult, orderedAdult[order(education_rec),])
+#Stampo
+cat("\n\n######## \n Primi 5 risultati\n########", "\n")
+head(orderedAdult, 5)
+cat("\n\n######## \n Ultimi 5 risultati\n########", "\n")
+tail(orderedAdult, 5)
