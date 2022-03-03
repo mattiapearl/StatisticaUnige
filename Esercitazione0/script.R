@@ -137,3 +137,17 @@ cat("\n\n######## \n Primi 5 risultati\n########", "\n")
 head(orderedAdult, 5)
 cat("\n\n######## \n Ultimi 5 risultati\n########", "\n")
 tail(orderedAdult, 5)
+
+
+##12
+#Filtro il dataframe per male e female
+mOrderedAdult <- orderedAdult[orderedAdult$sex == "Male",]  
+fOrderedAdult <- orderedAdult[orderedAdult$sex == "Female",]  
+#Li concateno per riga (Hanno lo stesso numero di colonne)
+
+mfOrderedAdult <- rbind(mOrderedAdult,fOrderedAdult)
+view(mfOrderedAdult)
+
+dim(mOrderedAdult)
+dim(fOrderedAdult)
+   
