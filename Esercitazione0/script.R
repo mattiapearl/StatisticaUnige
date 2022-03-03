@@ -100,7 +100,7 @@ printAbsRelHist <-  function (vettore, nomeX){
   colnames(totalTable) <- c("Freq Assoluta", "Relativa", "Pecentuale")
   #Stampa un "divisore". Il \n appended alla fine serve a mandare il cursore a nuova linea in cat. Con writelines non ci sarebbe il problema, con print non si potrebbe stampare su più righe
   cat("\n\n######## \n", nomeX,"\n########")
-  totalTable
+  print(totalTable)
   #Stampo l'istogramma del dataset dato
   barplot(aWcTable, xlab = nomeX, ylab = "Numero di rilevazioni",las=2)
   }
