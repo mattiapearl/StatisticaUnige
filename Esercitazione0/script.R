@@ -146,8 +146,10 @@ fOrderedAdult <- orderedAdult[orderedAdult$sex == "Female",]
 #Li concateno per riga (Hanno lo stesso numero di colonne)
 
 mfOrderedAdult <- rbind(mOrderedAdult,fOrderedAdult)
-view(mfOrderedAdult)
-
+View(mfOrderedAdult)
+g
+print("Dimensioni del dataframe Male")
 dim(mOrderedAdult)
+print("Dimensioni del dataframe Female")
 dim(fOrderedAdult)
    
