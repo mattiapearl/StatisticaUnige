@@ -1,0 +1,134 @@
+---
+title: "Esercitazione 1"
+author: "BTR"
+date: '2022-03-12'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setup preliminare
+Viene richiesto di utilizzare i dati e le elaborazioni svolte in precedenza sul dataset adult, quindi riporto il codice necessario alla definizione
+*Per più dettagli sul codice seguente consultare Esercitazione0*
+
+```{r}
+dfAdult = read.table(
+    "C:/Files/Personali/Unige/Code/SD/GruppoStat/dataset/adult.txt", 
+    sep = ",",
+    na.strings="?",
+    # La prima riga non va letta
+    header = F,
+    skip = 1,
+    col.names = c("age", "workclass", "fnlwgt", "education","education-num","marital-status", "occupation", "relationship", "race", "sex", "capital-gain","capital-loss", "hours-per-week","native-country","income")
+    )
+
+#Itero attraverso i nomi di colonna
+for (i in colnames(dfAdult)) {
+# Se la classe del vettore colonna (uso [[]] per generare un vettore anzi che un dataframe da una singola colonna) è character, cambia quella colonna in fattore  
+  # print(class(dfAdult[[i]])) //DEBUG
+  if(class(dfAdult[[i]]) == "character"){
+    #Cat concatena i valori e li stampa, così posso mettere sia i che la stringa nella stessa linea e ridurre la lunghezza 
+    cat("Cambio la classe di ", i ," a fattore\n")
+    # (Chiamo la colonna come vettore con [[]] anzi che dataframe$nomecolonna - che fa la stessa cosa - e cambio questo vettore in un factor) 
+    dfAdult[[i]] = as.factor(dfAdult[[i]])
+  }
+}
+
+#Costruisco il nuovo dataframe con solo variabili qualitative usando il ciclo usato in precedenza
+# Lo faccio partendo da quello iniziale
+qDfAdult = na.omit(dfAdult)
+#Itero e rimuovo le colonne che hanno classe int
+
+keepVect <- c()
+
+for (i in colnames(qDfAdult)) {
+  if(class(qDfAdult[[i]]) != "integer"){
+    #Aggiungo tutte queste colonne a un vettore
+     keepVect <- append(keepVect,i)
+  }
+}
+#Ora creo un subset del dataframe qualitativo senza le colonne quantitative
+#Devo usare questo metodo e non subset perchè colnames mi da una stringa, quindi il vettore è composto di stringhe - mentre subset vuole il valore "non in stringa"
+qDfAdult <- qDfAdult[keepVect]
+#Lo rinomino fattori e visualizzo le prime righe
+fattori <- qDfAdult
+```
+
+**Note:** Rimuovendo le righe con colonne non definite, sono eliminate a priori delle rilevazioni dalla tabella, infatti chi non ha mai lavorato ha sempre almeno una casella vuota. Fattori non contiene alcuna rilevazione di individui che non anno lavorato.
+
+# Svolgimento
+
+### Es1/2
+**Testo**
+-Costruire una tabella di contingenza con i conteggi per ciascuna delle variabili del data frame fattori;
+per ogni variabile, individuare gli eventuali livelli con meno di 10 unità sperimentali.
+- A partire dal data frame fattori, costruire un data frame di nome fattori2 eliminando le unit`a
+sperimentali che corrispondono a livelli con meno di 10 unit`a sperimentali.
+
+*Non ho trovato soluzioni più lineari al problema - 2 for sono inefficienti*
+```{r}
+# Itero attraverso la tabella e stampo una tabella di contingenza per ogni sua variabile
+# Quindi rimuovo le entrate con meno di 10 osservazioni
+
+#Inizializzo la nuova tabella 
+fattori2 <- fattori
+
+for(i in colnames(fattori)){
+  cat("\n\n#####\n TDC di ",i,"\n#####\n")
+  #Conto le osservazioni per livello
+  freqColonna = table(fattori2[[i]])
+  print(freqColonna)
+  # Utilizzo la frequenza per rimuovere le righe con certi attributi
+  for(l in levels(fattori[[i]])){
+    #Prendo ogni livello del fattore
+    #Se ce ne sono meno di 10, togli le righe con quelle osservazioni da fattori2
+    if(freqColonna[l]<11){
+      fattori2 <- fattori2[fattori2[[i]] != l ,]
+    }
+  }
+  #Rimuovo i livelli vuoti (Tecnicamente non necessario rispetto alla versione di R)
+  fattori2[[i]] <- factor(fattori2[[i]])
+}
+```
+
+### Es4/5/6
+
+**Testo**
+- Costruire tabelle di contingenza con: le frequenze assolute, relative congiunte, marginali, condizionate per
+alcune coppie di variabili ritenute di interesse. Ad esempio workclass/relationship, workclass/race,
+workclass/income, . . .
+- Costruire tabelle di contingenza con: le frequenze assolute, relative congiunte, marginali, condizionate per
+alcune coppie di variabili ritenute di interesse. Ad esempio workclass/relationship, workclass/race,
+workclass/income, . . .
+- Scrivere un breve commento dei risultati ottenuti.
+
+**Svolgimento**
+Studio inizialmente alcune tabelle di contingenza combinate
+
+
+
+*Sezione Workclass*
+```{r}
+printTitle <- function(string){
+  cat("\n\n############\n# ",string,"\n############\n\n")
+}
+printSub <- function(string){
+  cat("\n\n# ",string,"\n\n")
+}
+
+
+
+attach(fattori2)
+printTitle("Rapporto workclass e income")
+print(table(workclass,income))
+printTitle("Rapporto workclass e education")
+print(table(workclass,education))
+printTitle("Rapporto workclass e genere")
+print(table(workclass,sex))
+printTitle("Rapporto workclass e stato maritale")
+print(table(workclass,marital.status,sex))
+
+detach(fattori2)
+```
