@@ -1,0 +1,148 @@
+---
+title: "Esercitazione 2"
+author: "Bastreghi Ranalli Torriglia"
+date: '2022-03-24'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Setup preliminare
+
+```{r}
+setwd("C:/Files/Personali/Unige/Code/SD/StatGit/Esercitazione2")
+dati = read.table(
+  "amici.txt",
+  # No separatori, no na fields
+  header = T,
+  )
+```
+
+# Esercizio 1
+
+## Studio del dataframe amici.txt
+
+Costruisco le tabelle principali dal dataframe, quindi creo i barplot relativi
+```{r}
+datiMatr <- data.matrix(dati[,-1])
+rownames(datiMatr) = dati[,1]
+
+#Costruisco le tabelle rel congiunte, marginali, e poi i profili riga
+freqRelCongiunta = prop.table(datiMatr)
+
+freqMarginali = addmargins(freqRelCongiunta)
+freqMarginaliRiga = freqMarginali[-13,7]
+freqMarginaliColonna = freqMarginali[13,-7]
+
+freqCondizionateRiga = prop.table(datiMatr,1)
+freqCondizionateColonna = prop.table(datiMatr,2)
+
+### Creo i baplot
+
+
+library(RColorBrewer)
+coul <- brewer.pal(12, "Set2")
+
+#Freq rel congiunte
+barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relative congiunta ", col = coul, xlab = "Quantità uscite", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
+
+#Freq marginali colonne
+barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità uscite", ylab = "Frequenza")
+
+#Freq marginali righe
+barplot(freqMarginaliRiga, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali righe", col = coul, xlab = "Gruppo di età", ylab = "Frequenza")
+
+#Profili riga e colonna
+prof_rg = prop.table(datiMatr, 1)
+prof_col = prop.table(datiMatr, 2)
+
+par(mfrow = c(1,2))
+
+barplot(t(prof_rg), cex.names = 0.6,cex.axis = 0.6, main = "Profili riga", col = coul, ylab = "Frequenza", legend.text = colnames(datiMatr),args.legend = list(x = "bottomleft", cex = 0.65), las = 2 )
+barplot(prof_col, cex.names = 0.6,cex.axis = 0.6, main = "Profili colonna", col = coul, ylab = "Frequenza",legend.text = rownames(datiMatr),args.legend = list(x = "topright",inset = c(-0.17,0), cex = 0.65), las = 2)
+
+# Itero attraverso le righe e creo un barplot per ogni deviazione 
+par(mfrow = c(3,4), oma = c(3,0,0,0))
+
+for (i in 1:dim(datiMatr)[1]){
+
+  dev_riga = prof_rg[i,] - freqMarginaliColonna
+  barplot(dev_riga, cex.names = 0.6,cex.axis = 0.6,main = rownames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.2,0.5))
+abline(h=0)
+  }
+
+# Itero attraverso le colonne e creo un barplot per ogni deviazione 
+par(mfrow = c(3,2), oma = c(1,0,0,0))
+for (i in 1:dim(datiMatr)[2]){
+  dev_colonna = prof_col[,i] - freqMarginaliRiga
+  barplot(dev_colonna, cex.names = 0.6,cex.axis = 0.6,main =  colnames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.1,0.3))
+abline(h=0)
+    }
+
+```
+
+
+## Commento personale
+Riteniamo che 
+
+# Esercizio 2
+```{r}
+datiMatr = matrix(c(2829, 433, 394, 431,401, 9201,1092,733,691,1256,14764,877,531,337,1652,14759,1119,71,42,319 ), nrow = 4, ncol = 5, byrow = TRUE, )
+colnames(datiMatr) <-  c("Casa", "Mensa", "Rist.", "Bar", "Posto lav.")
+rownames(datiMatr) <-  c("Laurea","Diploma sup","Media", "Elementare")
+
+#Costruisco le tabelle rel congiunte, marginali, e poi i profili riga
+freqRelCongiunta = prop.table(datiMatr)
+
+freqMarginali = addmargins(freqRelCongiunta)
+freqMarginaliRiga = freqMarginali[-5,6]
+freqMarginaliColonna = freqMarginali[5,-6]
+
+freqCondizionateRiga = prop.table(datiMatr,1)
+freqCondizionateColonna = prop.table(datiMatr,2)
+
+### Creo i baplot
+
+
+library(RColorBrewer)
+coul <- brewer.pal(6, "Set2")
+
+#Freq rel congiunte
+barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relative congiunta ", col = coul, xlab = "", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
+
+#Freq marginali colonne
+barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità uscite", ylab = "Frequenza")
+
+#Freq marginali righe
+barplot(freqMarginaliRiga, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali righe", col = coul, xlab = "Gruppo di età", ylab = "Frequenza")
+
+#Profili riga e colonna
+prof_rg = prop.table(datiMatr, 1)
+prof_col = prop.table(datiMatr, 2)
+
+par(mfrow = c(1,2))
+
+barplot(t(prof_rg), cex.names = 0.6,cex.axis = 0.6, main = "Profili riga", col = coul, ylab = "Frequenza", legend.text = colnames(datiMatr),args.legend = list(x = "bottomleft", cex = 0.65), las = 2 )
+barplot(prof_col, cex.names = 0.6,cex.axis = 0.6, main = "Profili colonna", col = coul, ylab = "Frequenza",legend.text = rownames(datiMatr),args.legend = list(x = "topleft",inset = c(-0.17,0), cex = 0.65), las = 2)
+
+# Itero attraverso le righe e creo un barplot per ogni deviazione 
+par(mfrow = c(2,2), oma = c(1,0,0,0))
+
+for (i in 1:dim(datiMatr)[1]){
+
+  dev_riga = prof_rg[i,] - freqMarginaliColonna
+  barplot(dev_riga, cex.names = 0.6,cex.axis = 0.6,main = rownames(datiMatr)[i],ylim = c(-0.2,0.3), col = coul, las = 2)
+abline(h=0)
+  }
+
+# Itero attraverso le colonne e creo un barplot per ogni deviazione 
+par(mfrow = c(2,3), oma = c(1,0,0,0))
+for (i in 1:dim(datiMatr)[2]){
+
+  dev_colonna = prof_col[,i] - freqMarginaliRiga
+  barplot(dev_colonna, cex.names = 0.6,cex.axis = 0.6,main =  colnames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.5,0.4))
+abline(h=0)  
+  }
+```
