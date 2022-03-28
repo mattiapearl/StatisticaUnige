@@ -15,7 +15,7 @@ Viene richiesto di utilizzare i dati e le elaborazioni svolte in precedenza sul 
 
 ```{r}
 dfAdult = read.table(
-    "C:/Files/Personali/Unige/Code/SD/GruppoStat/dataset/adult.txt", 
+    "C:/Files/Personali/Unige/Code/SD/StatGit/dataset/adult.txt", 
     sep = ",",
     na.strings="?",
     # La prima riga non va letta
@@ -125,9 +125,13 @@ printTitle("Rapporto workclass e income")
 print(table(workclass,income))
 printTitle("Rapporto workclass e education")
 print(table(workclass,education))
-printTitle("Rapporto workclass e genere")
+printTitle("Workclass e genere, profili colonna con genere fissato")
+questa <- prop.table(table(workclass,sex),2)
+print(questa*100)
+plot(questa, main="Workclass e genere, profili colonna con genere fissato" )
+
 print(table(workclass,sex))
-printTitle("Rapporto workclass e stato maritale")
+printTitle("Rapporto workclass e stato maritale - condizionato al genere")
 print(table(workclass,marital.status,sex))
 
 detach(fattori2)
