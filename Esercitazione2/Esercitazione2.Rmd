@@ -25,6 +25,7 @@ dati = read.table(
 ## Studio del dataframe amici.txt
 
 Costruisco le tabelle principali dal dataframe, quindi creo i barplot relativi
+
 ```{r}
 datiMatr <- data.matrix(dati[,-1])
 rownames(datiMatr) = dati[,1]
@@ -64,7 +65,9 @@ barplot(t(prof_rg), cex.names = 0.6,cex.axis = 0.6, main = "Profili riga", col =
 barplot(prof_col, cex.names = 0.6,cex.axis = 0.6, main = "Profili colonna", col = coul, ylab = "Frequenza",legend.text = rownames(datiMatr),args.legend = list(x = "topright",inset = c(-0.17,0), cex = 0.65), las = 2)
 
 # Itero attraverso le righe e creo un barplot per ogni deviazione 
-par(mfrow = c(3,4), oma = c(3,0,0,0))
+par(mfrow = c(3,4), oma = c(0,0,3,0))
+
+
 
 for (i in 1:dim(datiMatr)[1]){
 
@@ -72,22 +75,25 @@ for (i in 1:dim(datiMatr)[1]){
   barplot(dev_riga, cex.names = 0.6,cex.axis = 0.6,main = rownames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.2,0.5))
 abline(h=0)
   }
+mtext("Deviazione dei profili riga dal marginale colonna", outer=TRUE,cex =1, side = 3)
 
 # Itero attraverso le colonne e creo un barplot per ogni deviazione 
-par(mfrow = c(3,2), oma = c(1,0,0,0))
+par(mfrow = c(3,2), oma = c(0,0,3,0))
 for (i in 1:dim(datiMatr)[2]){
   dev_colonna = prof_col[,i] - freqMarginaliRiga
   barplot(dev_colonna, cex.names = 0.6,cex.axis = 0.6,main =  colnames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.1,0.3))
 abline(h=0)
     }
+mtext("Deviazione dei profili colonna dal marginale riga", outer=TRUE,cex =1, side = 3)
 
 ```
 
-
 ## Commento personale
-Riteniamo che 
+
+Riteniamo che
 
 # Esercizio 2
+
 ```{r}
 datiMatr = matrix(c(2829, 433, 394, 431,401, 9201,1092,733,691,1256,14764,877,531,337,1652,14759,1119,71,42,319 ), nrow = 4, ncol = 5, byrow = TRUE, )
 colnames(datiMatr) <-  c("Casa", "Mensa", "Rist.", "Bar", "Posto lav.")
@@ -126,9 +132,11 @@ par(mfrow = c(1,2))
 
 barplot(t(prof_rg), cex.names = 0.6,cex.axis = 0.6, main = "Profili riga", col = coul, ylab = "Frequenza", legend.text = colnames(datiMatr),args.legend = list(x = "bottomleft", cex = 0.65), las = 2 )
 barplot(prof_col, cex.names = 0.6,cex.axis = 0.6, main = "Profili colonna", col = coul, ylab = "Frequenza",legend.text = rownames(datiMatr),args.legend = list(x = "topleft",inset = c(-0.17,0), cex = 0.65), las = 2)
+```
 
+```{r}
 # Itero attraverso le righe e creo un barplot per ogni deviazione 
-par(mfrow = c(2,2), oma = c(1,0,0,0))
+par(mfrow = c(2,2), oma = c(0,0,5,0))
 
 for (i in 1:dim(datiMatr)[1]){
 
@@ -136,13 +144,19 @@ for (i in 1:dim(datiMatr)[1]){
   barplot(dev_riga, cex.names = 0.6,cex.axis = 0.6,main = rownames(datiMatr)[i],ylim = c(-0.2,0.3), col = coul, las = 2)
 abline(h=0)
   }
+mtext("Deviazione dei profili riga dal marginale colonna", outer=TRUE,cex =1, side = 3)
+
 
 # Itero attraverso le colonne e creo un barplot per ogni deviazione 
-par(mfrow = c(2,3), oma = c(1,0,0,0))
+par(mfrow = c(2,3), oma = c(0,0,5,0))
 for (i in 1:dim(datiMatr)[2]){
 
   dev_colonna = prof_col[,i] - freqMarginaliRiga
   barplot(dev_colonna, cex.names = 0.6,cex.axis = 0.6,main =  colnames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.5,0.4))
 abline(h=0)  
-  }
+}
+mtext("Deviazione dei profili riga dal marginale colonna", outer=TRUE,cex =1, side = 3)
+
 ```
+
+TODO: - Commenti es 1 - Titolo ad ogni scheda e abbellimenti grafici - Commenti es 2 - Grafici aggiuntivi esercizio 2 - Miglioramento markdown + commenti codice
