@@ -1,32 +1,37 @@
 ---
-title: "Esercitazione 2"
+title: "Esercitazione 2 📈"
 author: "Bastreghi Ranalli Torriglia"
 date: '2022-03-24'
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### Setup preliminare
 
-```{r}
+
+```{r echo=FALSE, warning = FALSE}
+# Setup preliminare
 setwd("C:/Files/Personali/Unige/Code/SD/StatGit/Esercitazione2")
 dati = read.table(
   "amici.txt",
   # No separatori, no na fields
   header = T,
   )
+library(RColorBrewer)
+library(grid)
+library(gridExtra)
 ```
 
 # Esercizio 1
 
-## Studio del dataframe amici.txt
-
-Costruisco le tabelle principali dal dataframe, quindi creo i barplot relativi
-
-```{r}
+## Introduzione
+### Frequenza degli incontri con gli amici e fascia di età
+Vengono anlaizzate delle rilevazioni fatte durante un indagine **ISTAT** del 2010: "Aspetti della vita quotidiana". In particolare in questo paragrafo *(esercizio 1)* si studia il rapporto tra frequenza degli incontri con gli amici e la fascia di età
+```{r echo=FALSE, warning = FALSE}
 datiMatr <- data.matrix(dati[,-1])
 rownames(datiMatr) = dati[,1]
 
@@ -43,18 +48,44 @@ freqCondizionateColonna = prop.table(datiMatr,2)
 ### Creo i baplot
 
 
-library(RColorBrewer)
+
 coul <- brewer.pal(12, "Set2")
+
 
 #Freq rel congiunte
 barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relativa congiunta ", col = coul, xlab = "Quantità incontri con amici", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
+# Uso libreria esterna: creo nuova finestra per griglia
+grid.newpage()
+grid.table(datiMatr);
+
+
+par(mfrow = c(1, 1))
 
 #Freq marginali colonne
 barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità incontri con amici", ylab = "Frequenza")
 
+par(mfrow = c(1, 1))
 #Freq marginali righe
 barplot(freqMarginaliRiga, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali righe", col = coul, xlab = "Gruppo di età", ylab = "Frequenza")
+grid.newpage()
+grid.table(round(freqMarginali,4)*100)
+```
 
+## Commento sulle frequenze relative congiunte e sulle frequenze marginali 
+Partendo da un analisi di forma, si può subito intuire che le prime colonne, ovvero quelle relative a **tutti i giorni**, **più volte a settimana**, **una volta a settimana** e **qualche volta al mese** hanno una frequenza marginale^1 che cumulata supera l'*80%*.  
+Restringendo leggermente i "margini di osservazione", si può notare come già le prime due colonne costituiscano circa il *50%* delle osservazioni, suggerendo che nella popolazione analizzata questa sia l'opzione più comune.
+Prima di consultare i profili marginali riga (relativi alle fasce d'età), si può già notare come la popolazione tra **25 e i 54 anni** sia quella con più osservazioni.  
+Ciò implica che in casi come la quantità di incontri giornalieri con amici, in cui si nota una preponderanza della classe **6-14 anni**, poi evidenziata nei profili colonna, non si noti la massima frequenza marginale colonna poichè la classe più frequente sopra citata non ne prende attivamente parte (*come fa in tutti i casi da più volte a settimana fino a qualche volta al mese*).
+
+Sembra che la classe più comune di età, tenda ad avere dei dati alquanto ben distribuiti nelle prime 4 categorie osservate di quantità di uscite/incontri con amici, il che può suggerire che altre osservazioni potrebbero essere necessarie per le classi con meno rilevazioni.
+
+> ^1 costituita dalla somma delle frequenze relative congiunte, quindi dall'altezza della colonna. Si osserva questa congruenza nel barplot della frequenza marginale colonna 
+
+
+
+
+
+```{r echo=FALSE, warning = FALSE}
 #Profili riga e colonna
 prof_rg = prop.table(datiMatr, 1)
 prof_col = prop.table(datiMatr, 2)
@@ -88,13 +119,12 @@ mtext("Deviazione dei profili colonna dal marginale riga", outer=TRUE,cex =1, si
 
 ```
 
-## Commento personale
-
-Riteniamo che
-
 # Esercizio 2
+## Introduzione
+### Luogo consumazione pasto e titolo di studio
+Si studiano i dati relativi ad un indagine ISTAT che correla il luogo di consumazione del pasto e il titolo di studio.
 
-```{r}
+```{r echo=FALSE, warning = FALSE}
 datiMatr = matrix(c(2829, 433, 394, 431,401, 9201,1092,733,691,1256,14764,877,531,337,1652,14759,1119,71,42,319 ), nrow = 4, ncol = 5, byrow = TRUE, )
 colnames(datiMatr) <-  c("Casa", "Mensa", "Rist.", "Bar", "Posto lav.")
 rownames(datiMatr) <-  c("Laurea","Diploma sup","Media", "Elementare")
@@ -110,20 +140,27 @@ freqCondizionateRiga = prop.table(datiMatr,1)
 freqCondizionateColonna = prop.table(datiMatr,2)
 
 ### Creo i baplot
-
-
-library(RColorBrewer)
 coul <- brewer.pal(6, "Set2")
 
 #Freq rel congiunte
 barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relative congiunta ",beside = T, col = coul, xlab = "", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
+grid.newpage()
+grid.table(datiMatr);
 
 #Freq marginali colonne
 barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità inctotri con amici", ylab = "Frequenza")
 
 #Freq marginali righe
 barplot(freqMarginaliRiga, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali righe", col = coul, xlab = "Gruppo di età", ylab = "Frequenza")
+grid.newpage()
+grid.table(round(freqMarginali,4)*100)
+```
 
+## Studio delle frequenze relative congiunte e frequenze marginali
+Prima di studiare i dati è obbligatorio notare come le rilevazioni di persone che mangiano a **casa** siano l'80 percento del totale. Quindi come sicuramente renderanno poco efficace l'osservazione non correlata alle deviazioni dei profili riga e colonna, come avveniva nello studio precedente con la classe di età tra i 25 e i 54 anni.  
+Analogamente si può osservare come tra le rilevazioni meno del 10% abbia una laurea come titolo di studio. Quando si studieranno i relativi profili colonna sarà quindi necessario rapportare la dimensione del dato ottenuto con la frequenza totale dei laureati, cosa che verrà evidenziata con lo studio delle deviazioni.  
+
+```{r echo=FALSE, warning = FALSE}
 #Profili riga e colonna
 prof_rg = prop.table(datiMatr, 1)
 prof_col = prop.table(datiMatr, 2)
@@ -133,8 +170,31 @@ par(mfrow = c(1,2))
 barplot(t(prof_rg), cex.names = 0.6,cex.axis = 0.6, main = "Profili riga", col = coul, ylab = "Frequenza", legend.text = colnames(datiMatr),args.legend = list(x = "bottomleft", cex = 0.65), las = 2 )
 barplot(prof_col, cex.names = 0.6,cex.axis = 0.6, main = "Profili colonna", col = coul, ylab = "Frequenza",legend.text = rownames(datiMatr),args.legend = list(x = "topleft",inset = c(-0.17,0), cex = 0.65), las = 2)
 ```
+  
+## Commento alle distribuzioni marginali condizionate   
 
-```{r}
+### Profili riga  
+
+Dai grafici si riesce a capire che le osservazioni **non sono indipendenti**.                                
+
+La tabella dei profili riga evidenzia il luogo in cui gli italiani consumano il pranzo, in base al loro titolo di studio a prescindere dalla numerosità della classe relativa.
+
+Dai profili riga (come dalla distribuzione marginale) si osserva che la maggior parte degli italiani consuma il pranzo a casa. Sempre secondo i dati, coloro che hanno un titolo di studio elementare tendono a non pranzare al bar o al ristorante, a differenza di coloro che hanno una laurea o un diploma superiore. *Non essendo evidenziata l’età dei partecipanti allo studio, ciò potrebbe essere influenzato dall’indipendenza degli individui osservati.*
+
+La fascia di coloro che mangiano al bar è la più piccola sia per le unità sperimentali che hanno una licenza media che per quelle che hanno una licenza elementare.
+
+Si può anche osservare che la distribuzione di coloro che mangiano sul posto di lavoro è molto simile tra gli italiani che hanno una laurea, un diploma superiore o una licenza media, invece varia per coloro che hanno una licenza elementare.
+
+La frequenza marginali di coloro che hanno la licenza media è la più alta. Come verrà evidenziato nel commento relativo alle deviazioni dai profili riga, ciò inficia sulla capacità di analisi dei dati a partire dai profili colonna. Infatti un maggior numero assoluto di rilevazioni porta alla predominanza del valore nel profilo colonna, che potrebbe erroneamente suggerire una preferenza di tale scelta da parte del gruppo sopracitato nei vari casi. Ciò viene confutato osservando le deviazioni.
+
+### Profili colonna
+La tabella dei profili colonna condiziona rispetto al titolo di studio il luogo in cui  viene consumato il pranzo, *prescindendo dalla numerosità della classe.*
+
+Si osserva che tra gli italiani che pranzano nel loro posto di lavoro la maggior parte sono quelli che hanno una licenza media, subito seguiti da coloro che hanno un diploma superiore; tra coloro che mangiano a casa la maggior parte ha un titolo di studio elementare, invece una minima parte è rappresentata da coloro che hanno una laurea. Si nota inoltre che i dati relativi a coloro che mangiano a casa e coloro che mangiano in mensa sono relativamente simili, come anche per quanto riguarda coloro che pranzano al ristorante e coloro che pranzano al bar.
+
+Infine, si può notare che le rilevazioni riguardanti mensa e posto di lavoro, sono relativamente simili per coloro che hanno la laurea e gli italiani che hanno un diploma superiore, invece variano per coloro che hanno una licenza media o elementare.
+
+```{r echo=FALSE, warning = FALSE}
 # Itero attraverso le righe e creo un barplot per ogni deviazione 
 par(mfrow = c(2,2), oma = c(0,0,5,0))
 
@@ -155,5 +215,21 @@ for (i in 1:dim(datiMatr)[2]){
   barplot(dev_colonna, cex.names = 0.6,cex.axis = 0.6,main =  colnames(datiMatr)[i], col = coul, las = 2,ylim = c(-0.5,0.4))
 abline(h=0)  
 }
-mtext("Deviazione dei profili riga dal marginale colonna", outer=TRUE,cex =1, side = 3)
+mtext("Deviazione dei profili colonna dal marginale riga", outer=TRUE,cex =1, side = 3)
 ```
+
+## Analisi deviazione distribuzioni condizionate
+***Tutte le osservazioni seguenti sono fatte in relazione ai profili marginali.***
+
+Dalla tabella della deviazione dei profili riga dal marginale si nota ancora di più come coloro che hanno una laurea tendono a mangiare principalmente al bar o al ristorante e raramente a casa. Opposti sono i risultati per le unità sperimentali che hanno una licenza elementare che tendono a pranzare principalmente a casa.
+
+Per quanto riguarda gli italiani che possiedono un diploma superiore, sono ben distribuiti tra mensa, ristorante, bar e posto di lavoro, mentre tendono a non mangiare a casa.
+
+La popolazione che ha una licenza media è quella una maggiore popolosità, quindi questo va ad influenzare la frequenza marginale riga. Come preannunciato, si vede che la deviazione del profilo riga dal profilo medio è in valore assoluto la minore.
+
+*Quindi si può azzardare che le deviazioni dell’intero dataset rispetto ai marginali colonna siano deviazioni da ciò che fa la popolazione con la licenza media, o che questa è uno specchio della media della popolazione.*
+
+
+Dalla tabella della deviazione dei profili colonna dal marginale riga si vede come il maggior numero di persone che pranzano al bar oppure al ristorante sono coloro che hanno una laurea oppure un diploma superiore; invece, coloro che hanno una licenza elementare tendono a non mangiare al bar, al ristorante, o sul posto di lavoro. Per quanto riguarda coloro che pranzano in mensa la maggior parte sembrano essere le persone che hanno un diploma superiore invece coloro che hanno una licenza media tendono ad evitare la mensa. Come per la licenza media, ma in proporzione maggiore, gli stessi fenomeni avvengono nel rapporto tra marginali riga e profili colonna.
+
+# Grazie per l'attenzione 
