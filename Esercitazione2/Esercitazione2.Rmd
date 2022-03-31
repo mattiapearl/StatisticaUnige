@@ -47,10 +47,10 @@ library(RColorBrewer)
 coul <- brewer.pal(12, "Set2")
 
 #Freq rel congiunte
-barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relative congiunta ", col = coul, xlab = "Quantità uscite", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
+barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relativa congiunta ", col = coul, xlab = "Quantità incontri con amici", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
 
 #Freq marginali colonne
-barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità uscite", ylab = "Frequenza")
+barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità incontri con amici", ylab = "Frequenza")
 
 #Freq marginali righe
 barplot(freqMarginaliRiga, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali righe", col = coul, xlab = "Gruppo di età", ylab = "Frequenza")
@@ -116,10 +116,10 @@ library(RColorBrewer)
 coul <- brewer.pal(6, "Set2")
 
 #Freq rel congiunte
-barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relative congiunta ", col = coul, xlab = "", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
+barplot(freqRelCongiunta, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze relative congiunta ",beside = T, col = coul, xlab = "", ylab = "Frequenza", legend.text =dati[,1],args.legend = list(x = "topright", cex = 0.65))
 
 #Freq marginali colonne
-barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità uscite", ylab = "Frequenza")
+barplot(freqMarginaliColonna, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali colonne", col = coul, xlab = "Quantità inctotri con amici", ylab = "Frequenza")
 
 #Freq marginali righe
 barplot(freqMarginaliRiga, cex.names = 0.6,cex.axis = 0.6, main = "Frequenze marginali righe", col = coul, xlab = "Gruppo di età", ylab = "Frequenza")
@@ -156,7 +156,4 @@ for (i in 1:dim(datiMatr)[2]){
 abline(h=0)  
 }
 mtext("Deviazione dei profili riga dal marginale colonna", outer=TRUE,cex =1, side = 3)
-
 ```
-
-TODO: - Commenti es 1 - Titolo ad ogni scheda e abbellimenti grafici - Commenti es 2 - Grafici aggiuntivi esercizio 2 - Miglioramento markdown + commenti codice
