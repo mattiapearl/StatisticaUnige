@@ -94,7 +94,9 @@ par(mfrow = c(1,2))
 
 barplot(t(prof_rg), cex.names = 0.6,cex.axis = 0.6, main = "Profili riga", col = coul, ylab = "Frequenza", legend.text = colnames(datiMatr),args.legend = list(x = "bottomleft", cex = 0.65), las = 2 )
 barplot(prof_col, cex.names = 0.6,cex.axis = 0.6, main = "Profili colonna", col = coul, ylab = "Frequenza",legend.text = rownames(datiMatr),args.legend = list(x = "topright",inset = c(-0.17,0), cex = 0.65), las = 2)
+```
 
+```{r echo=FALSE, warning = FALSE}
 # Itero attraverso le righe e creo un barplot per ogni deviazione 
 par(mfrow = c(3,4), oma = c(0,0,3,0))
 
@@ -118,6 +120,30 @@ abline(h=0)
 mtext("Deviazione dei profili colonna dal marginale riga", outer=TRUE,cex =1, side = 3)
 
 ```
+
+
+## Commenti su profili riga, colonna; deviazione dai profili riga e colonna 
+
+### Osservando il grafico dei profili riga si può constatare che:  
+- La maggior parte delle persone di età compresa tra i 6 e i 24 anni incontra amici tutti i giorni o più volte a settimana. 
+
+- Le fasce d'età che più incontrano gli amici tutti i giorni o più volte a settimana sono quelle comprese tra gli 11 e i 19 anni, mentre la fascia che meno incontra gli amici tutti i giorni è la fascia compresa tra i 45 e i 54. 
+
+- C'è un progressivo aumento della porzione di persone che non incontra mai gli amici o solo qualche volta l'anno con l'aumentare dell'età.  
+
+- La fascia d'età compresa tra i 35 e i 64 anni ha abitudini sociali simili.
+
+### Analizzando il grafico dei profili colonna e le deviazioni dal marginale  colonna si può constatare che:
+
+- Osservando il grafico dei profili colonna sembra che la porzione di persone che esca con gli amici tutti i giorni sia più o meno comparabile tra tutte le fasce d'età, ma ciò è dovuto alla differenza di numero di persone osservate in ogni classe.
+Analizzando invece le deviazioni dai profili marginali si può notare come solo la fascia compresa tra i 25 e i 34 anni abbia una percentuale di persone che esce tutti i giorni simile a quella riscontrata sul totale, mentre la fascia d'età <=25 ha una percentuale maggiore e la fascia >=34 una percentuale minore.  
+
+- Osservando il grafico dei profili colonna sembra che siano alquanto differenti le fasce d'età delle persone che escono più volte a settimana, una volta a settimana e qualche volta al mese, ma ciò è dovuto alla differenza di numero di persone osservate in ogni classe.
+Analizzando invece le deviazioni dai profili marginali riga si può notare come la differenza in percentuale delle persone che escono più volte a settimana, una volta a settimana e qualche volta al mese rispetto al totale è pressochè minima.    
+
+- E' rilevante (osservando le deviazioni dai profili marginali riga) come siano notevoli le differenze in percentuale tra le persone che escono tutti i giorni nelle varie fasce d'età a favore dei più giovani e a sfavore dei più anziani.  
+
+- E' rilevante (osservando le deviazioni dai profili marginali riga) come siano notevoli le differenze in percentuale tra le persone che escono qualche volta l'anno o mai nelle varie fasce d'età, a favore dei più anziani e a sfavore delle fasce intermedie (20-34).  
 
 # Esercizio 2
 ## Introduzione
