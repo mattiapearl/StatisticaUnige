@@ -1,0 +1,170 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Esercitazione 2},
+  pdfauthor={Bastreghi Ranalli Torriglia},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Esercitazione 2}
+\author{Bastreghi Ranalli Torriglia}
+\date{2022-03-24}
+
+\begin{document}
+\maketitle
+
+\hypertarget{esercizio-1}{%
+\section{Esercizio 1}\label{esercizio-1}}
+
+\hypertarget{introduzione}{%
+\subsection{Introduzione}\label{introduzione}}
+
+\hypertarget{frequenza-degli-incontri-con-gli-amici-e-fascia-di-etuxe0}{%
+\subsubsection{Frequenza degli incontri con gli amici e fascia di
+età}\label{frequenza-degli-incontri-con-gli-amici-e-fascia-di-etuxe0}}
+
+Vengono anlaizzate delle rilevazioni fatte durante un indagine
+\textbf{ISTAT} del 2010: ``Aspetti della vita quotidiana''. In
+particolare in questo paragrafo \emph{(esercizio 1)} si studia il
+rapporto tra frequenza degli incontri con gli amici e la fascia di età
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-2-1.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-2-2.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-2-3.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-2-4.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-2-5.pdf}
+
+\hypertarget{commento-sulle-frequenze-relative-congiunte-e-sulle-frequenze-marginali}{%
+\subsection{Commento sulle frequenze relative congiunte e sulle
+frequenze
+marginali}\label{commento-sulle-frequenze-relative-congiunte-e-sulle-frequenze-marginali}}
+
+Partendo da un analisi di forma, si può subito intuire che le prime
+colonne, ovvero quelle relative a \textbf{tutti i giorni}, \textbf{più
+volte a settimana}, \textbf{una volta a settimana} e \textbf{qualche
+volta al mese} hanno una frequenza marginale\^{}1 che cumulata supera
+l'\emph{80\%}.\\
+Restringendo leggermente i ``margini di osservazione'', si può notare
+come già le prime due colonne costituiscano circa il \emph{50\%} delle
+osservazioni, suggerendo che nella popolazione analizzata questa sia
+l'opzione più comune. Prima di consultare i profili marginali riga
+(relativi alle fasce d'età), si può già notare come la popolazione tra
+\textbf{25 e i 54 anni} sia quella con più osservazioni.\\
+Ciò implica che in casi come la quantità di incontri giornalieri con
+amici, in cui si nota una preponderanza della classe \textbf{6-14 anni},
+poi evidenziata nei profili colonna, non si noti la massima frequenza
+marginale colonna poichè la classe più frequente sopra citata non ne
+prende attivamente parte (\emph{come fa in tutti i casi da più volte a
+settimana fino a qualche volta al mese}).
+
+Sembra che la classe più comune di età, tenda ad avere dei dati alquanto
+ben distribuiti nelle prime 4 categorie osservate di quantità di
+uscite/incontri con amici, il che può suggerire che altre osservazioni
+potrebbero essere necessarie per le classi con meno rilevazioni.
+
+\begin{quote}
+\^{}1 costituita dalla somma delle frequenze relative congiunte, quindi
+dall'altezza della colonna. Si osserva questa congruenza nel barplot
+della frequenza marginale colonna
+\end{quote}
+
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-3-2.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-3-3.pdf}
+
+\hypertarget{esercizio-2}{%
+\section{Esercizio 2}\label{esercizio-2}}
+
+\hypertarget{introduzione-1}{%
+\subsection{Introduzione}\label{introduzione-1}}
+
+\hypertarget{luogo-consumazione-pasto-e-titolo-di-studio}{%
+\subsubsection{Luogo consumazione pasto e titolo di
+studio}\label{luogo-consumazione-pasto-e-titolo-di-studio}}
+
+Si studiano i dati relativi ad un indagine ISTAT che correla il luogo di
+consumazione del pasto e il titolo di studio.
+
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-4-1.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-4-2.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-4-3.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-4-4.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-4-5.pdf}
+
+\hypertarget{studio-delle-frequenze-relative-congiunte-e-frequenze-marginali}{%
+\subsection{Studio delle frequenze relative congiunte e frequenze
+marginali}\label{studio-delle-frequenze-relative-congiunte-e-frequenze-marginali}}
+
+Prima di studiare i dati è obbligatorio notare come le rilevazioni di
+persone che mangiano a \textbf{casa} siano l'80 percento del totale.
+Quindi come sicuramente renderanno poco efficace l'osservazione non
+correlata alle deviazioni dei profili riga e colonna, come avveniva
+nello studio precedente con la classe di età tra i 25 e i 54 anni.\\
+Analogamente si può osservare come tra le rilevazioni meno del 10\%
+abbia una laurea come titolo di studio. Quando si studieranno i relativi
+profili colonna sarà quindi necessario rapportare la dimensione del dato
+ottenuto con la frequenza totale dei laureati, cosa che verrà
+evidenziata con lo studio delle deviazioni.
+
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{Esercitazione2_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+\end{document}
