@@ -66,3 +66,12 @@ cat("Minimo, Q1, Mediana/Q2, Q3, Massimo:\n", tukey)
 
 #b: costruisci il box-plot della variabile hours.per.week
 boxplot(df_adult_11$hours.per.week)
+#e della distribuzione cumulata
+plot(ecdf(df_adult_11$hours.per.week))
+
+#c: costruisci istogrammi per diversi numeri di classi
+# Aggrego per kmeans
+five <- kmeans(df_adult_11$hours.per.week, 5) # 5 
+six <- kmeans(df_adult_11$hours.per.week, 6)  
+ten <- kmeans(df_adult_11$hours.per.week, 10)
+
