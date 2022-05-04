@@ -1,7 +1,3 @@
-# Cluster generica + colorazione sulla matrice delle distanze mostrata delle variabili che si trovano nella stessa classe dato il metodo
-# Commento generico sulla parte analizzata.
-
-
 # Includo la libreria
 library(classifly)
 
@@ -41,6 +37,46 @@ yellow_rgber <- function(vettore, maxi){
   return(result)
 }
 
+info_cluster <-  function(dataset_std, cluster, numclassi){
+  dataset_std <- as.data.frame(dataset_std)
+  dist_int_medie = c(1:numclassi); dist_int_max= c(1:numclassi); inerzie_int_medie = c(1:numclassi)
+  gruppi = cutree(cluster, k=numclassi)
+  
+  for(i in 1:numclassi){
+    a <- rowSums(scale(dataset_std[gruppi==i,],scale = F)^2)
+    dist_int_medie[i] = mean(sqrt(a))
+    dist_int_max[i] = max(sqrt(a))
+    inerzie_int_medie[i] = mean(a)
+  }
+  compattezza = cbind(table(gruppi),dist_int_medie, dist_int_max,inerzie_int_medie)
+  colnames(compattezza)[1] = "n"
+  inerzia_tot = (dim(dataset_std)[1]-1)*dim(dataset_std)[2]
+  inerzia_int = sum(inerzie_int_medie*table(gruppi))
+  percent_inerzia_fra= round((inerzia_tot - inerzia_int)/inerzia_tot*100,2)
+  return(list(compattezza,inerzia_tot,inerzia_int,percent_inerzia_fra))
+}
+
+
+
+highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette){
+  dataset_col = q_dataset
+  dataset_col[matrice_sep == gruppo,] = 0
+  # Il colore scuro deve rappresentare la classe, quindi il valore massimo si deve avere dove non si ha la classe
+  dataset_col[matrice_sep != gruppo,] = 1
+  image(as.matrix(dataset_col), axes = FALSE, col = palette)
+  
+  return(dataset_col)
+}
+
+grup_reg_area <-function(dataset, q_dataset, gruppo, matrice_sep){
+  count_dataset <-  cbind(q_dataset,Area = dataset$Area  ,Region = dataset$Region )
+  count_dataset <- count_dataset[matrice_sep == gruppo,]
+  #Rimuovo i livelli inutilizzati
+  count_dataset$Area <- droplevels(count_dataset$Area) 
+  count_dataset$Region <- droplevels(as.factor(count_dataset$Region)) 
+  return(list(table(count_dataset$Area),table(count_dataset$Region)))
+}
+
 # Imprto il dataframe
 olives <- classifly::olives
 # Per utilità, ordino il dataset da sud verso nord e poi alla fine aggiungo la sardegna.
@@ -69,6 +105,7 @@ q_olives$Region <- NULL
 baricentro <- round(rowSums(t(q_olives))/572,2)
 
 ## Cluster delle variabili
+par(mfrow=c(1,1))
 # Inizialmente creo una matrice della distanza utilizzando 1-rho^2
 matr_dist_corr <- 1-cor(q_olives)^2
 matr_corr_var <- cor(q_olives)
@@ -128,4 +165,74 @@ barplot(dist_reg_non_cluster[3,], las = 2, ylim = c(-2,2), main = "Deviazione ba
 # L'analisi appena fatta è un tipo possibile di cluster, meno quantitativo e basato solo sulla supposizione che regioni affini abbiano alberi dello stesso tipo, quindi oli con grassi simili.
 
 ## Cluster quantitativo
+##aggregazione gerarchica con distanza euclidea e metodo di ward, single linkage, complete linkage, average linkage 
+aggreg_w2eucl = hclust(as.dist(ed1_o), method ="ward.D2")
+aggreg_seucl= hclust(as.dist(ed1_o), method = "single")
+aggreg_compleucl = hclust(as.dist(ed1_o), method ="complete")
+aggreg_avereucl = hclust(as.dist(ed1_o), method ="average")
 
+##aggregazione gerarchica con distanza del massimo e metodo di ward, single linkage, complete linkage, average linkage 
+aggreg_w2max = hclust(as.dist(edM_o), method ="ward.D2")
+aggreg_smax = hclust(as.dist(edM_o), method ="single")
+aggreg_complmax = hclust(as.dist(edM_o), method ="complete")
+aggreg_avermax = hclust(as.dist(edM_o), method ="average")
+
+##aggregazione gerarchica con distanza del massimo e metodo di ward, single linkage, complete linkage, average linkage 
+aggreg_w2man =hclust(as.dist(edm_o), method ="ward.D2")
+aggreg_sman = hclust(as.dist(edm_o), method ="single")
+aggreg_complman = hclust(as.dist(edm_o), method ="complete")
+aggreg_averman = hclust(as.dist(edm_o), method ="average")
+
+##creo i dendogrammi delle aggregazioni con il metodo del ward linkage
+par(mfrow=c(3,1))
+plot(aggreg_w2eucl, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Euclidea - Ward linkage",info_cluster(st_q_olives,aggreg_w2eucl,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels =FALSE)
+##dall'analisi degli indici di bontà la cluster migliore risulta essere l'aggregazione con la distanza euclidea e il metodo di ward
+###divido le unità sperimentali in tre classi e le visualizzo sul dendogramma 
+num_clust =3
+gruppi_euclw = cutree(aggreg_w2eucl, k=num_clust)
+rect.hclust(aggreg_w2eucl, k=num_clust, border= "purple")
+plot(aggreg_w2max, hang= -0.1, frame.plot= TRUE, main=paste("Distanza del massimo - Ward linkage",info_cluster(st_q_olives,aggreg_w2max,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_w2man, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Manhattan - Ward linkage: ",info_cluster(st_q_olives,aggreg_w2man,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+
+##creo i dendogrammi delle aggregazioni con il metodo single linkage  
+plot(aggreg_seucl, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Euclidea - Single linkage",info_cluster(st_q_olives,aggreg_seucl,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_smax, hang= -0.1, frame.plot= TRUE, main=paste("Distanza del massimo - Single linkage",info_cluster(st_q_olives,aggreg_smax,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_sman, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Manhattan - Single linkage",info_cluster(st_q_olives,aggreg_sman,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+
+##creo i dendogrammi delle aggregazioni con il metodo complete linkage
+plot(aggreg_compleucl, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Euclidea - Complete linkage",info_cluster(st_q_olives,aggreg_compleucl,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_complmax, hang= -0.1, frame.plot= TRUE, main=paste("Distanza del massimo - Complete linkage",info_cluster(st_q_olives,aggreg_complmax,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_complman, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Manhattan - Complete linkage",info_cluster(st_q_olives,aggreg_complman,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+
+##creo i dendogrammi delle aggregazioni con il metodo dell'average linkage
+plot(aggreg_avereucl, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Euclidea - Average linkage",info_cluster(st_q_olives,aggreg_avereucl,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_avermax, hang= -0.1, frame.plot= TRUE, main=paste("Distanza del massimo - Average linkage",info_cluster(st_q_olives,aggreg_avermax,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+plot(aggreg_averman, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Manhattan - Average linkage",info_cluster(st_q_olives,aggreg_averman,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels=FALSE)
+
+##aggregazione non gerarchica
+aggreg_kmeans3= kmeans(st_q_olives, center= 3, nstart= 20)
+aggreg_kmeans9= kmeans(st_q_olives, center= 9, nstart= 20)
+
+# Coloro delle immagini 572x572 rispetto alle divisioni in classi interessanti per poi sovrapporle alle precedenti immagini delle distanze.
+par(mfrow = c(3,1))
+highlight_gruppo(q_olives,1, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,2, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,3, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"))
+# Divisioni in classi per kmeans3
+highlight_gruppo(q_olives,1, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,2, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,3, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"))
+# Divisioni in classi per kmeans9
+par(mfrow=c(3,3))
+highlight_gruppo(q_olives,1, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,2, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,3, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,4, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,5, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,6, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,7, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,8, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,9, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+
+
+# Grup Reg Area + Percentuale della regione "presa"
