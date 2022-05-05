@@ -96,7 +96,7 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     table_zona_gruppo <- tabelle_reg_zona[[2]]
     
     
-    # Base barplot Area
+    # Base barplot "Area"/Regione
     barplot(table(dataset$Area), axes = FALSE, ylim=c(0,250) , xaxt='n', ann=FALSE)
     abline(h = 0, lty = 2, col = "black")
     abline(h = 50, lty = 2, col = "grey")
@@ -104,14 +104,15 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     abline(h = 150, lty = 2, col = "grey")
     abline(h = 200, lty = 2, col = "grey")
     abline(h = 250, lty = 2, col = "grey")
-    barplot(table(dataset$Area), las = 2, col ="#09057270",ylim = c(0,250), add = TRUE )
+    barplot(table(dataset$Area), las = 2, col ="#09057265",ylim = c(0,250), add = TRUE )
     
-    final_plot_r <-  barplot(table_reg_gruppo,  col =hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE )
+    final_plot_r <-  barplot(table_reg_gruppo,  col =hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE,ylab="n° elementi" )
     text(final_plot_r, table(dataset$Area)+20, labels = paste(round((table_reg_gruppo/table(dataset$Area))*100, 0),"%"))
     
+    title(main = paste("Gruppo ",i))
     
     
-    # Base barplot Regione
+    # Base barplot "Region"/Zona
     barplot(table(dataset$Region), axes = FALSE, ylim=c(0,572), xaxt='n', ann=FALSE )
     abline(h = 0, lty = 2, col = "black")
     abline(h = 100, lty = 2, col = "grey")
@@ -121,12 +122,11 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     abline(h = 500, lty = 2, col = "grey")
     tablR <- table(dataset$Region)
     rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
-    barplot(tablR, las = 2, col ="#09057270",ylim = c(0,572), add = TRUE )
+    barplot(tablR, las = 2, col ="#09057265",ylim = c(0,572), add = TRUE )
 
-    final_plot_z <-  barplot(table_zona_gruppo,  col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE )
+    final_plot_z <-  barplot(table_zona_gruppo,  col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE, ylab="n° elementi" )
     text(final_plot_z, table(dataset$Region)+50, labels = paste(round((table_zona_gruppo/table(dataset$Region))*100, 1),"%"))
     
-    title(main = paste("Gruppo ",i))
   }
 }
 
