@@ -69,15 +69,17 @@ highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette){
 }
 
 grup_reg_area <-function(dataset, gruppo, matrice_sep, clear= FALSE){
-  count_dataset <-  cbind(dataset,Area = dataset$Area  ,Region = dataset$Region )
-  count_dataset <- count_dataset[matrice_sep == gruppo,]
   
-  print(levels(dataset$Region))
-  print(levels(count_dataset$Region))
+  
+  count_dataset <-  cbind(dataset,Area = dataset$Area  ,Region = dataset$Region )
+  # Ho bisogno di assegnare i livelli a questa variabile per avere una tabella con 0 osservazioni e poterla dividere in gruppo_plot_reg_area
+  count_dataset$Region <- as.factor(count_dataset$Region)
+  levels(count_dataset$Region) <- c("Sud-Italia","Sardegna","Nord-Italia")
+  count_dataset <- count_dataset[matrice_sep == gruppo,]
   #Rimuovo i livelli inutilizzati
   if(clear){
-  count_dataset$Area <- droplevels(count_dataset$Area) 
-  count_dataset$Region <- droplevels(as.factor(count_dataset$Region)) 
+    count_dataset$Area <- droplevels(count_dataset$Area) 
+    count_dataset$Region <- droplevels(as.factor(count_dataset$Region)) 
   }
   return(list(table(count_dataset$Area),table(count_dataset$Region)))
 }
@@ -90,6 +92,8 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
   for(i in 1:num_classi){
       
     tabelle_reg_zona <- grup_reg_area(dataset,i,matrice_sep) 
+    table_reg_gruppo <- tabelle_reg_zona[[1]]
+    table_zona_gruppo <- tabelle_reg_zona[[2]]
     
     
     # Base barplot Area
@@ -101,10 +105,11 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     abline(h = 200, lty = 2, col = "grey")
     abline(h = 250, lty = 2, col = "grey")
     barplot(table(dataset$Area), las = 2, col ="#09057270",ylim = c(0,250), add = TRUE )
-    final_plot <-  barplot(table(gruppo$Area), las = 2, col =hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE )
+    
+    final_plot_r <-  barplot(table_reg_gruppo,  col =hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE )
+    text(final_plot_r, table(dataset$Area)+20, labels = paste(round((table_reg_gruppo/table(dataset$Area))*100, 0),"%"))
     
     
-    text(final_plot, table(gruppo$Area), labels = round(balance, digits = 2))
     
     # Base barplot Regione
     barplot(table(dataset$Region), axes = FALSE, ylim=c(0,572), xaxt='n', ann=FALSE )
@@ -116,8 +121,12 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     abline(h = 500, lty = 2, col = "grey")
     tablR <- table(dataset$Region)
     rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
-    barplot(tablR, las = 2, col = col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
-      
+    barplot(tablR, las = 2, col ="#09057270",ylim = c(0,572), add = TRUE )
+
+    final_plot_z <-  barplot(table_zona_gruppo,  col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE )
+    text(final_plot_z, table(dataset$Region)+50, labels = paste(round((table_zona_gruppo/table(dataset$Region))*100, 1),"%"))
+    
+    title(main = paste("Gruppo ",i))
   }
 }
 
@@ -328,3 +337,7 @@ par(mfrow=c(1,1))
 for(i in colnames(q_olives)){
   gruppo_box_propriet(q_olives, gruppi_euclw, i)
 }
+## Informazioni sulla presenze di aree e regioni in ogni gruppo
+gruppo_plot_reg_area(perc_olives, gruppi_euclw)
+gruppo_plot_reg_area(perc_olives, aggreg_kmeans3$cluster)
+gruppo_plot_reg_area(perc_olives, aggreg_kmeans9$cluster)
