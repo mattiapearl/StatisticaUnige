@@ -68,12 +68,14 @@ highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette){
   return(dataset_col)
 }
 
-grup_reg_area <-function(dataset, q_dataset, gruppo, matrice_sep){
+grup_reg_area <-function(dataset, q_dataset, gruppo, matrice_sep, clear= FALSE){
   count_dataset <-  cbind(q_dataset,Area = dataset$Area  ,Region = dataset$Region )
   count_dataset <- count_dataset[matrice_sep == gruppo,]
   #Rimuovo i livelli inutilizzati
+  if(clear){
   count_dataset$Area <- droplevels(count_dataset$Area) 
   count_dataset$Region <- droplevels(as.factor(count_dataset$Region)) 
+  }
   return(list(table(count_dataset$Area),table(count_dataset$Region)))
 }
 
@@ -235,4 +237,28 @@ highlight_gruppo(q_olives,8, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
 highlight_gruppo(q_olives,9, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
 
 
-# Grup Reg Area + Percentuale della regione "presa"
+## Studio della struttura dei gruppi dati (method: w2 con euclidea ; 3 gruppi)
+# Serie di barplot rappresentanti la presenza dei dati elementi nei vari gruppi rispetto al gruppo principale
+par(mfrow= c(1,1), bg = "#ffffff", mar = c(7,2.5,2,2.5))
+barplot(table(perc_olives$Area), axes = FALSE, ylim=c(0,250) , xaxt='n', ann=FALSE)
+abline(h = 0, lty = 2, col = "black")
+abline(h = 50, lty = 2, col = "grey")
+abline(h = 100, lty = 2, col = "grey")
+abline(h = 150, lty = 2, col = "grey")
+abline(h = 200, lty = 2, col = "grey")
+abline(h = 250, lty = 2, col = "grey")
+barplot(table(perc_olives$Area), las = 2, col = hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE )
+
+
+barplot(table(perc_olives$Region), axes = FALSE, ylim=c(0,572), xaxt='n', ann=FALSE )
+abline(h = 0, lty = 2, col = "black")
+abline(h = 100, lty = 2, col = "grey")
+abline(h = 200, lty = 2, col = "grey")
+abline(h = 300, lty = 2, col = "grey")
+abline(h = 400, lty = 2, col = "grey")
+abline(h = 500, lty = 2, col = "grey")
+tablR <- table(perc_olives$Region)
+rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
+barplot(tablR, las = 2, col = hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
+
+
