@@ -130,24 +130,39 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
   }
 }
 
-gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet){
+gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet,subtitle){
   q_dataset = as.data.frame(q_dataset)
   num_classi = length(table(divisione_gruppi))
   # Colorazione
-  colors = hcl.colors(num_classi+2,"Sunset")
+  colors_d = hcl.colors(num_classi+2,"Sunset")
   # Creo una lista vuota per attaccarci gli elementi
   lista_dati_plot = list()
   lista_dati_plot[[1]] = q_dataset[[propriet]]
+  means <- c(mean(q_dataset[[propriet]]))
   names(lista_dati_plot)[1] = "Dataset"
   for(i in 1:num_classi){
     current_group <- q_dataset[divisione_gruppi==i,]
     print(current_group)
     lista_dati_plot[[i+1]] = current_group[[propriet]]
     # Cambio nome
-    #FIX!S
     names(lista_dati_plot)[i+1] = paste("Gruppo ", i)
+    # Aggiungo media al vettore per stamparlo tra poco
+    means <- cbind(means, mean(current_group[[propriet]]))
   }
-  boxplot(lista_dati_plot, horizontal = TRUE, col = colors, border = "#333333", outcol =colors, main = paste("Boxplot per gruppi di: ", propriet) )
+  boxplot(lista_dati_plot, horizontal = TRUE, col = colors_d, border = "#333333", outcol =colors_d, main = paste("Boxplot per gruppi di: ", propriet), sub= paste(subtitle," | n° Gruppi:",num_classi ) )
+  # Stampa le linee di media
+  for(i in 1:length(means)){
+    # Punti
+    points(y = i,                             
+           x = means[i],
+           col="white",
+           pch = 16)
+    # Contorni
+    points(y = i,                             
+           x = means[i],
+           col="black",
+           pch = 21)
+  }
   }
 
 # Imprto il dataframe
@@ -332,10 +347,16 @@ tablR <- table(perc_olives$Region)
 rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
 barplot(tablR, las = 2, col = hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
 
-## Boxplot per variabile per gruppo
+## Boxplot per variabile per gruppo con media in punto bianco
 par(mfrow=c(1,1))
 for(i in colnames(q_olives)){
-  gruppo_box_propriet(q_olives, gruppi_euclw, i)
+  gruppo_box_propriet(q_olives, gruppi_euclw, i, "Euclidea di Ward")
+}
+for(i in colnames(q_olives)){
+  gruppo_box_propriet(q_olives, aggreg_kmeans3$cluster, i, "Kmeans - 3")
+}
+for(i in colnames(q_olives)){
+  gruppo_box_propriet(q_olives, aggreg_kmeans9$cluster, i, "Kmeans - 9")
 }
 ## Informazioni sulla presenze di aree e regioni in ogni gruppo
 gruppo_plot_reg_area(perc_olives, gruppi_euclw)
