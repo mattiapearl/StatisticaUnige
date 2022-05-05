@@ -68,9 +68,12 @@ highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette){
   return(dataset_col)
 }
 
-grup_reg_area <-function(dataset, q_dataset, gruppo, matrice_sep, clear= FALSE){
-  count_dataset <-  cbind(q_dataset,Area = dataset$Area  ,Region = dataset$Region )
+grup_reg_area <-function(dataset, gruppo, matrice_sep, clear= FALSE){
+  count_dataset <-  cbind(dataset,Area = dataset$Area  ,Region = dataset$Region )
   count_dataset <- count_dataset[matrice_sep == gruppo,]
+  
+  print(levels(dataset$Region))
+  print(levels(count_dataset$Region))
   #Rimuovo i livelli inutilizzati
   if(clear){
   count_dataset$Area <- droplevels(count_dataset$Area) 
@@ -78,6 +81,65 @@ grup_reg_area <-function(dataset, q_dataset, gruppo, matrice_sep, clear= FALSE){
   }
   return(list(table(count_dataset$Area),table(count_dataset$Region)))
 }
+
+gruppo_plot_reg_area <- function(dataset, matrice_sep){
+  par(mfrow= c(2,1), bg = "#ffffff", mar = c(7,2.5,2,2.5))
+  
+  num_classi <- length(table(matrice_sep)) 
+  
+  for(i in 1:num_classi){
+      
+    tabelle_reg_zona <- grup_reg_area(dataset,i,matrice_sep) 
+    
+    
+    # Base barplot Area
+    barplot(table(dataset$Area), axes = FALSE, ylim=c(0,250) , xaxt='n', ann=FALSE)
+    abline(h = 0, lty = 2, col = "black")
+    abline(h = 50, lty = 2, col = "grey")
+    abline(h = 100, lty = 2, col = "grey")
+    abline(h = 150, lty = 2, col = "grey")
+    abline(h = 200, lty = 2, col = "grey")
+    abline(h = 250, lty = 2, col = "grey")
+    barplot(table(dataset$Area), las = 2, col ="#09057270",ylim = c(0,250), add = TRUE )
+    final_plot <-  barplot(table(gruppo$Area), las = 2, col =hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE )
+    
+    
+    text(final_plot, table(gruppo$Area), labels = round(balance, digits = 2))
+    
+    # Base barplot Regione
+    barplot(table(dataset$Region), axes = FALSE, ylim=c(0,572), xaxt='n', ann=FALSE )
+    abline(h = 0, lty = 2, col = "black")
+    abline(h = 100, lty = 2, col = "grey")
+    abline(h = 200, lty = 2, col = "grey")
+    abline(h = 300, lty = 2, col = "grey")
+    abline(h = 400, lty = 2, col = "grey")
+    abline(h = 500, lty = 2, col = "grey")
+    tablR <- table(dataset$Region)
+    rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
+    barplot(tablR, las = 2, col = col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
+      
+  }
+}
+
+gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet){
+  q_dataset = as.data.frame(q_dataset)
+  num_classi = length(table(divisione_gruppi))
+  # Colorazione
+  colors = hcl.colors(num_classi+2,"Sunset")
+  # Creo una lista vuota per attaccarci gli elementi
+  lista_dati_plot = list()
+  lista_dati_plot[[1]] = q_dataset[[propriet]]
+  names(lista_dati_plot)[1] = "Dataset"
+  for(i in 1:num_classi){
+    current_group <- q_dataset[divisione_gruppi==i,]
+    print(current_group)
+    lista_dati_plot[[i+1]] = current_group[[propriet]]
+    # Cambio nome
+    #FIX!S
+    names(lista_dati_plot)[i+1] = paste("Gruppo ", i)
+  }
+  boxplot(lista_dati_plot, horizontal = TRUE, col = colors, border = "#333333", outcol =colors, main = paste("Boxplot per gruppi di: ", propriet) )
+  }
 
 # Imprto il dataframe
 olives <- classifly::olives
@@ -261,4 +323,8 @@ tablR <- table(perc_olives$Region)
 rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
 barplot(tablR, las = 2, col = hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
 
-
+## Boxplot per variabile per gruppo
+par(mfrow=c(1,1))
+for(i in colnames(q_olives)){
+  gruppo_box_propriet(q_olives, gruppi_euclw, i)
+}
