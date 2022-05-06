@@ -164,7 +164,7 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep, subtitle){
     text(final_plot_z, table(dataset$Region)+50, labels = paste(round((table_zona_gruppo/table(dataset$Region))*100, 1),"%"))
     title( sub = paste(
       subtitle, 
-      " - n° fruppi: ",
+      " - n° Gruppi: ",
       num_classi, 
       " - numerosità gruppo corrente: ",
       sum(table_reg_gruppo),
@@ -246,8 +246,8 @@ image(matr_corr_var[,c(8:1)], axes = FALSE,)
 
 #Per la cluster scelgo il metodo di ward
 aggregazione_var <- hclust(as.dist(matr_dist_corr),method = "ward.D" )
-par(mar = c(2.5,2.5,2.5,2)+0.1)
-plot(aggregazione_var, hang= -0.1, frame.plot= TRUE, main="Aggregazione variabili",sub = "Distanza utilizzata: 1-rho^2 ; Metodo di aggregazione: Ward", xlab ="", ylab="Indice di aggregazione")
+par(mar = c(5,2.5,2.5,2)+0.1)
+plot(aggregazione_var, hang= -0.1, frame.plot= TRUE, main="Aggregazione variabili",sub = "Distanza utilizzata: 1-rho^2 - Metodo di aggregazione: Ward", xlab ="", ylab="Indice di aggregazione")
 num_classi = 2
 rect.hclust(aggregazione_var, k=num_classi, border = "purple")
 
@@ -368,6 +368,8 @@ highlight_gruppo(q_olives,9, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-M
 ## Studio della struttura dei gruppi dati (method: w2 con euclidea ; 3 gruppi)
 # Serie di barplot rappresentanti la presenza dei dati elementi nei vari gruppi rispetto al gruppo principale
 
+
+
 ## Boxplot per variabile per gruppo con media in punto bianco
 par(mfrow=c(1,1))
 for(i in colnames(q_olives)){
@@ -379,7 +381,45 @@ for(i in colnames(q_olives)){
 for(i in colnames(q_olives)){
   gruppo_box_propriet(q_olives, aggreg_kmeans9$cluster, i, "Kmeans - 9")
 }
+
+
 ## Informazioni sulla presenze di aree e regioni in ogni gruppo
 gruppo_plot_reg_area(perc_olives, gruppi_euclw, "Euclidea di Ward")
 gruppo_plot_reg_area(perc_olives, aggreg_kmeans3$cluster,"Kmeans - 3")
 gruppo_plot_reg_area(perc_olives, aggreg_kmeans9$cluster,"Kmeans - 9")
+
+
+
+## Distribuzioni marginali
+par(mfrow= c(1,1), bg = "#ffffff", mar = c(8,2.5,3,2.5), cex.lab =0.5)
+
+barplot(table(perc_olives$Area), axes = FALSE, ylim=c(0,250) , xaxt='n', ann=FALSE)
+abline(h = 0, lty = 2, col = "black")
+abline(h = 50, lty = 2, col = "grey")
+abline(h = 100, lty = 2, col = "grey")
+abline(h = 150, lty = 2, col = "grey")
+abline(h = 200, lty = 2, col = "grey")
+abline(h = 250, lty = 2, col = "grey")
+marg_regioni <- barplot(table(perc_olives$Area), las = 2, col = hcl.colors(9,palette = "ag_sunset"),ylim = c(0,250), add = TRUE )
+
+text(marg_regioni, table(perc_olives$Area)+20, labels = table(perc_olives$Area))
+
+title(main = "Distribuzioni Marginali Regioni ")
+
+
+# Base barplot "Region"/Zona
+barplot(table(perc_olives$Region), axes = FALSE, ylim=c(0,572), xaxt='n', ann=FALSE )
+abline(h = 0, lty = 2, col = "black")
+abline(h = 100, lty = 2, col = "grey")
+abline(h = 200, lty = 2, col = "grey")
+abline(h = 300, lty = 2, col = "grey")
+abline(h = 400, lty = 2, col = "grey")
+abline(h = 500, lty = 2, col = "grey")
+tablR <- table(perc_olives$Region)
+rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
+marg_zone <-  barplot(tablR, col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
+text(marg_zone, table(perc_olives$Region)+50, labels = table(perc_olives$Region))
+title(main = "Distribuzioni Marginali Zone")
+
+
+
