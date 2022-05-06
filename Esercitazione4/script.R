@@ -1,7 +1,8 @@
 # Includo la libreria
 library(classifly)
 
-dist_image <- function(matr){
+dist_image <- function(matr, title, subtitle){
+  par(mfrow = c(1,1), mar= c(7,2.5,2.5,4) )
   # Specchio la matrice per visualizzarla
   image(matr[,c(572:1)], axes= FALSE)
   # Linee verticali (spesse al cambio area)
@@ -22,6 +23,7 @@ dist_image <- function(matr){
   segments(0,1-424/572,1,1-424/572, lwd = 1)
   segments(0,1-474/572,1,1-474/572, lwd = 2)
   segments(0,1-507/572,1,1-507/572,lwd = 1)
+  title(main= title, sub = subtitle)
 }
 
 # Funzione che prende un vettore e restituisce un vettore della stessa lunghezza in formato rgb che evidenzia con colori più scuri i valori più vicini al massimo fornito
@@ -56,15 +58,31 @@ info_cluster <-  function(dataset_std, cluster, numclassi){
   return(list(compattezza,inerzia_tot,inerzia_int,percent_inerzia_fra))
 }
 
+plot_dev_baricentro <- function(matr_deviaz, subtitle = ""){
+  par(mfrow = c(1,1), mar= c(10,2.5,5,2.5))
+  
+  n_blocchi <- nrow(matr_deviaz)
+  
+  for(i in 1:n_blocchi){
+    barplot(matr_deviaz[i,], axes = FALSE, ylim=c(-2,2) , xaxt='n', ann=FALSE, col= rgb(0.9,0.4,0,0.3))
+    abline(h = -2:2, lty = 2, col = "grey")
+    abline(h = 0, lty = 2, col = "#333333")
+    title(main= paste("Deviazione dal baricentro: ", rownames(matr_deviaz)[i]), sub= subtitle)
+    barplot(matr_deviaz[i,], las = 2,ylim = c(-2,2) , col = yellow_rgber(matr_deviaz[i,],2), add = TRUE)
+    
+  }
+  
+}
 
-
-highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette){
+highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette, metodo){
+  par(mfrow = c(1,1), mar = c(5,2.5,2.5,2.5))
+  
   dataset_col = q_dataset
   dataset_col[matrice_sep == gruppo,] = 0
   # Il colore scuro deve rappresentare la classe, quindi il valore massimo si deve avere dove non si ha la classe
   dataset_col[matrice_sep != gruppo,] = 1
   image(as.matrix(dataset_col), axes = FALSE, col = palette)
-  
+  title(main = paste("Elementi su immagine di: Gruppo ",gruppo), sub = paste("Metodo: ",metodo))
   return(dataset_col)
 }
 
@@ -84,8 +102,8 @@ grup_reg_area <-function(dataset, gruppo, matrice_sep, clear= FALSE){
   return(list(table(count_dataset$Area),table(count_dataset$Region)))
 }
 
-gruppo_plot_reg_area <- function(dataset, matrice_sep){
-  par(mfrow= c(2,1), bg = "#ffffff", mar = c(7,2.5,2,2.5))
+gruppo_plot_reg_area <- function(dataset, matrice_sep, subtitle){
+  par(mfrow= c(2,1), bg = "#ffffff", mar = c(6,2.5,2,2.5), cex.lab =0.5)
   
   num_classi <- length(table(matrice_sep)) 
   
@@ -106,7 +124,16 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     abline(h = 250, lty = 2, col = "grey")
     barplot(table(dataset$Area), las = 2, col ="#09057265",ylim = c(0,250), add = TRUE )
     
-    final_plot_r <-  barplot(table_reg_gruppo,  col =hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE,ylab="n° elementi" )
+    final_plot_r <-  barplot(
+      table_reg_gruppo,  
+      col =hcl.colors(9,palette ="ag_sunset"),
+      ylim = c(0,250), 
+      add = TRUE,  
+      xaxt='n',
+      yaxt="n", 
+      ann=FALSE,
+      ylab="n° elementi",
+      )
     text(final_plot_r, table(dataset$Area)+20, labels = paste(round((table_reg_gruppo/table(dataset$Area))*100, 0),"%"))
     
     title(main = paste("Gruppo ",i))
@@ -122,15 +149,32 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep){
     abline(h = 500, lty = 2, col = "grey")
     tablR <- table(dataset$Region)
     rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
-    barplot(tablR, las = 2, col ="#09057265",ylim = c(0,572), add = TRUE )
+    barplot(tablR, col ="#09057265",ylim = c(0,572), add = TRUE )
 
-    final_plot_z <-  barplot(table_zona_gruppo,  col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE,  xaxt='n',yaxt="n", ann=FALSE, ylab="n° elementi" )
+    final_plot_z <-  barplot(
+      table_zona_gruppo,  
+      col =hcl.colors(4,palette ="Sunset"),
+      ylim = c(0,572), 
+      add = TRUE,  
+      xaxt='n',
+      yaxt="n", 
+      ann=FALSE, 
+      ylab="n° elementi",
+      )
     text(final_plot_z, table(dataset$Region)+50, labels = paste(round((table_zona_gruppo/table(dataset$Region))*100, 1),"%"))
-    
+    title( sub = paste(
+      subtitle, 
+      " - n° fruppi: ",
+      num_classi, 
+      " - numerosità gruppo corrente: ",
+      sum(table_reg_gruppo),
+      " su ", nrow(dataset))
+    )
   }
 }
 
 gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet,subtitle){
+  par(mar=c(7,2.5,2,2.5))
   q_dataset = as.data.frame(q_dataset)
   num_classi = length(table(divisione_gruppi))
   # Colorazione
@@ -220,10 +264,9 @@ ed1_o = as.matrix(dist(matrice_osservazioni, method = "euclidean") , nrow= 572)
 edM_o = as.matrix(dist(matrice_osservazioni, method = "maximum") , nrow= 572)
 edm_o = as.matrix(dist(matrice_osservazioni, method = "manhattan") , nrow= 572)
 
-par(mfrow=c(2,2))
-dist_image(ed1_o)
-dist_image(edM_o)
-dist_image(edm_o)
+dist_image(ed1_o, "Immagine distanza", "Distanza: Euclidea")
+dist_image(edM_o, "Immagine distanza", "Distanza: Massimo")
+dist_image(edm_o, "Immagine distanza", "Distanza: Manhattan")
 
 st_q_olives = scale(q_olives)
 # Osservando le tre possibili distance, sembra che la distanza euclidea sia quella che prioritizza la differenziazione per regione. Questo vuol dire che c'è un elemento (una coordinata) degli oli che è più caratterizzata dalla regione di altre - infatti la distanza del massimo non la evidenzia mentre la manhattan si (che è una versione meno "geometrica" della distanza euclidea).
@@ -237,10 +280,9 @@ colnames(dist_reg_non_cluster) <-  colnames(q_olives)
 rownames(dist_reg_non_cluster) <-  c("Sud Italia", "Nord Italia", "Sardegna")
 # TABELLA BELLA
 View(dist_reg_non_cluster)
-par(mfrow = c(1,1))
-barplot(dist_reg_non_cluster[1,], las = 2,ylim = c(-2,2), main = "Deviazione baricentro Sud Italia", col = yellow_rgber(dist_reg_non_cluster[1,],2))
-barplot(dist_reg_non_cluster[2,], las = 2, ylim = c(-2,2), main = "Deviazione baricentro Nord Italia", col = yellow_rgber(dist_reg_non_cluster[2,],2))
-barplot(dist_reg_non_cluster[3,], las = 2, ylim = c(-2,2), main = "Deviazione baricentro Sardegna", col = yellow_rgber(dist_reg_non_cluster[3,],2))
+
+#Barplot di deviazione dal baricentro
+plot_dev_baricentro(dist_reg_non_cluster)
 # Sembra che in tutta italia sia l'acido oleico
 
 #@ Studio la matrice ed1_o (i.e: euclidean distance ^ 1 _ olives)
@@ -272,7 +314,7 @@ aggreg_complman = hclust(as.dist(edm_o), method ="complete")
 aggreg_averman = hclust(as.dist(edm_o), method ="average")
 
 ##creo i dendogrammi delle aggregazioni con il metodo del ward linkage
-par(mfrow=c(3,1))
+par(mfrow=c(3,1), mar = c(2.5,2.5,2.5,2.5))
 plot(aggreg_w2eucl, hang= -0.1, frame.plot= TRUE, main=paste("Distanza Euclidea - Ward linkage",info_cluster(st_q_olives,aggreg_w2eucl,3)[[4]]), xlab ="", ylab="Indice di aggregazione", labels =FALSE)
 ##dall'analisi degli indici di bontà la cluster migliore risulta essere l'aggregazione con la distanza euclidea e il metodo di ward
 ###divido le unità sperimentali in tre classi e le visualizzo sul dendogramma 
@@ -302,50 +344,29 @@ aggreg_kmeans3= kmeans(st_q_olives, center= 3, nstart= 20)
 aggreg_kmeans9= kmeans(st_q_olives, center= 9, nstart= 20)
 
 # Coloro delle immagini 572x572 rispetto alle divisioni in classi interessanti per poi sovrapporle alle precedenti immagini delle distanze.
-par(mfrow = c(3,1))
-highlight_gruppo(q_olives,1, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,2, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,3, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"))
+par(mfrow = c(1,1))
+highlight_gruppo(q_olives,1, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"), "Ward, Euclidea (3 gruppi)")
+highlight_gruppo(q_olives,2, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"), "Ward, Euclidea (3 gruppi)")
+highlight_gruppo(q_olives,3, cutree(aggreg_w2eucl,k=3), hcl.colors(2, "RdPu"), "Ward, Euclidea (3 gruppi)")
 # Divisioni in classi per kmeans3
-highlight_gruppo(q_olives,1, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,2, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,3, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,1, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"), "K-Means (3 gruppi)")
+highlight_gruppo(q_olives,2, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"),"K-Means (3 gruppi)")
+highlight_gruppo(q_olives,3, aggreg_kmeans3$cluster, hcl.colors(2, "RdPu"),"K-Means (3 gruppi)")
 # Divisioni in classi per kmeans9
 par(mfrow=c(3,3))
-highlight_gruppo(q_olives,1, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,2, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,3, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,4, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,5, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,6, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,7, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,8, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
-highlight_gruppo(q_olives,9, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"))
+highlight_gruppo(q_olives,1, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,2, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,3, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,4, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,5, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,6, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,7, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,8, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
+highlight_gruppo(q_olives,9, aggreg_kmeans9$cluster, hcl.colors(2, "RdPu"), "K-Means (9 gruppi)")
 
 
 ## Studio della struttura dei gruppi dati (method: w2 con euclidea ; 3 gruppi)
 # Serie di barplot rappresentanti la presenza dei dati elementi nei vari gruppi rispetto al gruppo principale
-par(mfrow= c(1,1), bg = "#ffffff", mar = c(7,2.5,2,2.5))
-barplot(table(perc_olives$Area), axes = FALSE, ylim=c(0,250) , xaxt='n', ann=FALSE)
-abline(h = 0, lty = 2, col = "black")
-abline(h = 50, lty = 2, col = "grey")
-abline(h = 100, lty = 2, col = "grey")
-abline(h = 150, lty = 2, col = "grey")
-abline(h = 200, lty = 2, col = "grey")
-abline(h = 250, lty = 2, col = "grey")
-barplot(table(perc_olives$Area), las = 2, col = hcl.colors(9,palette ="ag_sunset"),ylim = c(0,250), add = TRUE )
-
-
-barplot(table(perc_olives$Region), axes = FALSE, ylim=c(0,572), xaxt='n', ann=FALSE )
-abline(h = 0, lty = 2, col = "black")
-abline(h = 100, lty = 2, col = "grey")
-abline(h = 200, lty = 2, col = "grey")
-abline(h = 300, lty = 2, col = "grey")
-abline(h = 400, lty = 2, col = "grey")
-abline(h = 500, lty = 2, col = "grey")
-tablR <- table(perc_olives$Region)
-rownames(tablR) = c("Sud-Italia", "Sardegna","Nord-Italia")
-barplot(tablR, las = 2, col = hcl.colors(4,palette ="Sunset"),ylim = c(0,572), add = TRUE )
 
 ## Boxplot per variabile per gruppo con media in punto bianco
 par(mfrow=c(1,1))
@@ -359,6 +380,6 @@ for(i in colnames(q_olives)){
   gruppo_box_propriet(q_olives, aggreg_kmeans9$cluster, i, "Kmeans - 9")
 }
 ## Informazioni sulla presenze di aree e regioni in ogni gruppo
-gruppo_plot_reg_area(perc_olives, gruppi_euclw)
-gruppo_plot_reg_area(perc_olives, aggreg_kmeans3$cluster)
-gruppo_plot_reg_area(perc_olives, aggreg_kmeans9$cluster)
+gruppo_plot_reg_area(perc_olives, gruppi_euclw, "Euclidea di Ward")
+gruppo_plot_reg_area(perc_olives, aggreg_kmeans3$cluster,"Kmeans - 3")
+gruppo_plot_reg_area(perc_olives, aggreg_kmeans9$cluster,"Kmeans - 9")
