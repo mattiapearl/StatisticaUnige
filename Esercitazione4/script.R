@@ -1,6 +1,7 @@
 # Includo la libreria
 library(classifly)
 
+# Funzione che stampa a schermo un immagine a partire dalla matrice delle distanze date
 dist_image <- function(matr, title, subtitle){
   par(mfrow = c(1,1), mar= c(7,2.5,2.5,4) )
   # Specchio la matrice per visualizzarla
@@ -39,6 +40,7 @@ yellow_rgber <- function(vettore, maxi){
   return(result)
 }
 
+# Funzione che data una cluster e il numero di classi a cui "tagliare" fornisce informazioni utili, come le distanze interne, le inerzie, e l'indice di bontà
 info_cluster <-  function(dataset_std, cluster, numclassi){
   dataset_std <- as.data.frame(dataset_std)
   dist_int_medie = c(1:numclassi); dist_int_max= c(1:numclassi); inerzie_int_medie = c(1:numclassi)
@@ -58,6 +60,7 @@ info_cluster <-  function(dataset_std, cluster, numclassi){
   return(list(compattezza,inerzia_tot,inerzia_int,percent_inerzia_fra))
 }
 
+# Funzione che data una matrice di deviazione costruisce un grafico di bell'aspetto per ogni riga
 plot_dev_baricentro <- function(matr_deviaz, subtitle = ""){
   par(mfrow = c(1,1), mar= c(10,2.5,5,2.5))
   
@@ -74,6 +77,7 @@ plot_dev_baricentro <- function(matr_deviaz, subtitle = ""){
   
 }
 
+# Funzione che mostra su un immagine analoga a quella delle distanze la posizone (con un colore scuro) dei ogni gruppo in questione
 highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette, metodo){
   par(mfrow = c(1,1), mar = c(5,2.5,2.5,2.5))
   
@@ -86,6 +90,7 @@ highlight_gruppo <- function(q_dataset,gruppo, matrice_sep, palette, metodo){
   return(dataset_col)
 }
 
+# Funzione che fornisce informazioni su Area e Region di una serie di gruppi data una cluster di separazione
 grup_reg_area <-function(dataset, gruppo, matrice_sep, clear= FALSE){
   
   
@@ -103,6 +108,7 @@ grup_reg_area <-function(dataset, gruppo, matrice_sep, clear= FALSE){
   return(list(table(count_dataset$Area),table(count_dataset$Region), 100*table(count_dataset$Area)/sum(table(count_dataset$Area)), 100*table(count_dataset$Region)/sum(table(count_dataset$Region))))
 }
 
+#Funzione che permette di graficare visivamente la "Quantità" di Area e Region contenute nei vari gruppi di una cluster
 gruppo_plot_reg_area <- function(dataset, matrice_sep, subtitle){
   par(mfrow= c(2,1), bg = "#ffffff", mar = c(6,2.5,2,2.5), cex.lab =0.5)
   
@@ -174,6 +180,7 @@ gruppo_plot_reg_area <- function(dataset, matrice_sep, subtitle){
   }
 }
 
+# Funzione che grafica per ogni proprietà qualitativa disponibile, per ogni gruppo della separazione di una cluster, i boxplot riferiti a quelle variabili
 gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet,subtitle){
   par(mar=c(7,2.5,2,2.5))
   q_dataset = as.data.frame(q_dataset)
@@ -194,7 +201,7 @@ gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet,subtitle){
     # Aggiungo media al vettore per stamparlo tra poco
     means <- cbind(means, mean(current_group[[propriet]]))
   }
-  boxplot(lista_dati_plot, horizontal = TRUE, col = colors_d, border = "#333333", outcol =colors_d, main = paste("Boxplot per gruppi di: ", propriet), sub= paste(subtitle," | n° Gruppi:",num_classi ) )
+  boxplot(lista_dati_plot, horizontal = TRUE, col = colors_d, border = "#333333", outcol =colors_d, main = paste("Boxplot per gruppi di: ", propriet), sub= paste(subtitle," | n° Gruppi:",num_classi ), cex= 0.8 )
   # Stampa le linee di media
   for(i in 1:length(means)){
     # Punti
@@ -208,7 +215,12 @@ gruppo_box_propriet <- function(q_dataset, divisione_gruppi, propriet,subtitle){
            col="black",
            pch = 21)
   }
-  }
+}
+
+
+###########
+# RUNTIME #
+###########
 
 # Imprto il dataframe
 olives <- classifly::olives
@@ -242,7 +254,7 @@ par(mfrow=c(1,1))
 # Inizialmente creo una matrice della distanza utilizzando 1-rho^2
 matr_dist_corr <- 1-cor(q_olives)^2
 matr_corr_var <- cor(q_olives)
-#COMMENTARE etc. etc.
+# Immagine delle distanze. Specchiata per fare in modo che rispecchi la matrice data, con colori abbastanza "Profondi" (100 unità) per vedere variazione di distanze standardizzate
 image(1-matr_dist_corr[,c(8:1)], axes = FALSE, col=hcl.colors(100,"YlOrRd"))
 
 #Per la cluster scelgo il metodo di ward
@@ -278,7 +290,7 @@ baric_reg3 <- colMeans(st_q_olives[perc_olives$Region == 3,])
 
 dist_reg_non_cluster <-matrix(c( baric_reg1 , baric_reg2 , baric_reg3 ), ncol = 8, byrow = TRUE) # Sono standardizzate, quindi il baricentro sarebbe 0
 colnames(dist_reg_non_cluster) <-  colnames(q_olives)
-rownames(dist_reg_non_cluster) <-  c("Sud Italia", "Nord Italia", "Sardegna")
+rownames(dist_reg_non_cluster) <-  c("Sud Italia", "Sardegna", "Nord Italia")
 # TABELLA BELLA
 View(dist_reg_non_cluster)
 
