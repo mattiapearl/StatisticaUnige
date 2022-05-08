@@ -242,7 +242,7 @@ par(mfrow=c(1,1))
 matr_dist_corr <- 1-cor(q_olives)^2
 matr_corr_var <- cor(q_olives)
 #COMMENTARE etc. etc.
-image(matr_corr_var[,c(8:1)], axes = FALSE,)
+image(1-matr_corr_var[,c(8:1)]^2, axes = FALSE,)
 
 #Per la cluster scelgo il metodo di ward
 aggregazione_var <- hclust(as.dist(matr_dist_corr),method = "ward.D" )
