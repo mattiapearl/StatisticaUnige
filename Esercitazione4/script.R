@@ -99,7 +99,8 @@ grup_reg_area <-function(dataset, gruppo, matrice_sep, clear= FALSE){
     count_dataset$Area <- droplevels(count_dataset$Area) 
     count_dataset$Region <- droplevels(as.factor(count_dataset$Region)) 
   }
-  return(list(table(count_dataset$Area),table(count_dataset$Region)))
+  
+  return(list(table(count_dataset$Area),table(count_dataset$Region), 100*table(count_dataset$Area)/sum(table(count_dataset$Area)), 100*table(count_dataset$Region)/sum(table(count_dataset$Region))))
 }
 
 gruppo_plot_reg_area <- function(dataset, matrice_sep, subtitle){
@@ -421,5 +422,5 @@ marg_zone <-  barplot(tablR, col =hcl.colors(4,palette ="Sunset"),ylim = c(0,572
 text(marg_zone, table(perc_olives$Region)+50, labels = table(perc_olives$Region))
 title(main = "Distribuzioni Marginali Zone")
 
-
+# Composizione percentuale dei gruppi
 
