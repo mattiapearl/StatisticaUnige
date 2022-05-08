@@ -242,13 +242,13 @@ par(mfrow=c(1,1))
 matr_dist_corr <- 1-cor(q_olives)^2
 matr_corr_var <- cor(q_olives)
 #COMMENTARE etc. etc.
-image(1-matr_corr_var[,c(8:1)]^2, axes = FALSE,)
+image(1-matr_dist_corr[,c(8:1)], axes = FALSE, col=hcl.colors(100,"YlOrRd"))
 
 #Per la cluster scelgo il metodo di ward
 aggregazione_var <- hclust(as.dist(matr_dist_corr),method = "ward.D" )
 par(mar = c(5,2.5,2.5,2)+0.1)
 plot(aggregazione_var, hang= -0.1, frame.plot= TRUE, main="Aggregazione variabili",sub = "Distanza utilizzata: 1-rho^2 - Metodo di aggregazione: Ward", xlab ="", ylab="Indice di aggregazione")
-num_classi = 2
+num_classi = 3
 rect.hclust(aggregazione_var, k=num_classi, border = "purple")
 
 ### Cluster unità sperimentali
