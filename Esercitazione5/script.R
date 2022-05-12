@@ -40,7 +40,7 @@ boxplot(st_q_olives, vertical = T, cex.axis=1.4, main ="Box-plot delle valiabili
 
 ##matrice della distanza tra le variabili
 distanza_var =as.dist(round(cor(st_q_olives),3))
-View(distanza_var)
+View(as.matrix(distanza_var))
 pairs(st_q_olives)
 
 
@@ -67,7 +67,9 @@ plot(pca_olives)
 
 ##matrice contenente le correlazioni tra variabili originali e componenti principali
 corr_var_comp = round(pca_olives$loadings%*%diag(pca_olives$sdev),3)
-
+#Cambio i colnames
+colnames(corr_var_comp) = paste("C",1:8,sep="")
+View(corr_var_comp)
 
 
 ##disegno il grafico delle comp 1 e 2
@@ -79,6 +81,12 @@ symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
 ##fedeltà dela rappresentazione delle singoe variabili sul primo piano fattoriale
 qual_12 = corr_var_comp[,1]^2+corr_var_comp[,2]^2
 View(qual_12)
+
+
+##Cluster con ward-euclidea, 9 gruppi
+
+
+
 
 
 
