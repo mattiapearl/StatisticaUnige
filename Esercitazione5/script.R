@@ -1,4 +1,23 @@
-# Imprto il dataframe
+info_cluster <-  function(dataset_std, cluster, numclassi){
+  dataset_std <- as.data.frame(dataset_std)
+  dist_int_medie = c(1:numclassi); dist_int_max= c(1:numclassi); inerzie_int_medie = c(1:numclassi)
+  gruppi = cutree(cluster, k=numclassi)
+  
+  for(i in 1:numclassi){
+    a <- rowSums(scale(dataset_std[gruppi==i,],scale = F)^2)
+    dist_int_medie[i] = mean(sqrt(a))
+    dist_int_max[i] = max(sqrt(a))
+    inerzie_int_medie[i] = mean(a)
+  }
+  compattezza = cbind(table(gruppi),dist_int_medie, dist_int_max,inerzie_int_medie)
+  colnames(compattezza)[1] = "n"
+  inerzia_tot = (dim(dataset_std)[1]-1)*dim(dataset_std)[2]
+  inerzia_int = sum(inerzie_int_medie*table(gruppi))
+  percent_inerzia_fra= round((inerzia_tot - inerzia_int)/inerzia_tot*100,2)
+  return(list(compattezza,inerzia_tot,inerzia_int,percent_inerzia_fra))
+}
+
+# Importo il dataframe
 olives <- classifly::olives
 # Per utilità, ordino il dataset da sud verso nord e poi alla fine aggiungo la sardegna.
 # Il processo è tedioso, ma risulta nell'utilizzare la funzione order su un manualmente "ri" numerato factor dell'Area
@@ -112,6 +131,28 @@ legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("r
 plot(pca_olives$scores[,2],pca_olives$scores[,3], xlab="seconda componente", ylab="terza componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
 abline(h=0, v=0)
 legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
+
+
+### cluster analysis con il metodo di ward e la ditanza euclidea
+matrice_osservazioni = as.matrix(q_olives)
+##standardizzo le variabili
+matrice_osservazioni = scale (matrice_osservazioni)
+##calcolo le distanze con il metodo della distanza euclidea
+ed1_o = as.matrix(dist(matrice_osservazioni, method = "euclidean") , nrow= 572)
+##aggrego con il metodo di ward
+aggreg_w2eucl = hclust(as.dist(ed1_o), method ="ward.D2")
+##creo nove gruppi 
+gruppi_euclW = cutree(aggreg_w2eucl, k=9)
+
+##informazioni sul raggruppamento appena eseguito 
+info_cluster(st_q_olives,aggreg_w2eucl, 9)
+
+
+##cose da fare:
+##immagine matrice distanza variabili 
+##immagine matrice ditanza variabili e comp princ
+##grafico unità sperimentali per gruppi 
+##grafico unità sperimentali con scrito regioni
 
 
 
