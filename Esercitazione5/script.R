@@ -73,25 +73,46 @@ View(corr_var_comp)
 
 
 ##disegno il grafico delle comp 1 e 2
-plot(corr_var_comp[,1],corr_var_comp[,2], xlim=c(-1,1),asp=1,xlab="primo asse",ylab="secondo asse", main = "Grafico delle variabili")
+plot(corr_var_comp[,1],corr_var_comp[,2],ylim=c(-1,1), xlim=c(-1,1),asp=1,xlab="primo asse",ylab="secondo asse", main = "Grafico delle variabili")
 abline(h=0, v=0)
 symbols(0,0, circles = 1, inches =F, add=T)
 text(corr_var_comp[,1], corr_var_comp[,2], pos=3, labels=colnames(st_q_olives),cex=0.8)
 symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
+
 ##fedeltà dela rappresentazione delle singoe variabili sul primo piano fattoriale
 qual_12 = corr_var_comp[,1]^2+corr_var_comp[,2]^2
 View(qual_12)
 
 
-##Cluster con ward-euclidea, 9 gruppi
+##disegno il grafico delle componenti 1 e 3
+plot(corr_var_comp[,1],corr_var_comp[,3], xlim=c(-1,1), ylim=c(-1,1),asp=1,xlab="primo asse",ylab="terzo asse", main = "Grafico delle variabili")
+abline(h=0, v=0)
+symbols(0,0, circles = 1, inches =F, add=T)
+text(corr_var_comp[,1], corr_var_comp[,3], pos=3, labels=colnames(st_q_olives),cex=0.8)
+symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
 
+##disegno il grafico delle componenti 1 e 3 
+plot(corr_var_comp[,2],corr_var_comp[,3], xlim=c(-1,1), ylim=c(-1,1),asp=1,xlab="secondo asse",ylab="terzo asse", main = "Grafico delle variabili")
+abline(h=0, v=0)
+symbols(0,0, circles = 1, inches =F, add=T)
+text(corr_var_comp[,2], corr_var_comp[,3], pos=3, labels=colnames(st_q_olives),cex=0.8)
+symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
 
-
-
-
-
-##grafico delle unità sperimentali
+##grafico delle unità sperimentali per la prima e la seconda componente
 plot(pca_olives$scores[,1],pca_olives$scores[,2], xlab="prima componente", ylab="seconda componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
 abline(h=0, v=0)
 legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
+
+##grafico delle unità sperimentali per la prima e la terza componente
+plot(pca_olives$scores[,1],pca_olives$scores[,3], xlab="prima componente", ylab="terza componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
+abline(h=0, v=0)
+legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
+
+##grafico delle unità sperimentali per la seconda e la terza componente
+plot(pca_olives$scores[,2],pca_olives$scores[,3], xlab="seconda componente", ylab="terza componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
+abline(h=0, v=0)
+legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
+
+
+
 
