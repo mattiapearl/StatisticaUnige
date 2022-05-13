@@ -1,3 +1,57 @@
+# Dove vett n componenti è il vettore contenenti le componenti da combinare. Tipo 1:3 o 2:5 o c(2,3,6,9)
+# Dove matrice_corr è la matrice della correlazione tra le variabili e la loro proiezione sulle componenti principali
+cerchio_correlazione <- function(matrice_corr, st_dataset, vett_n_componenti){
+  posizione <- 1
+  for(i in vett_n_componenti){
+    # Itero negli elementi che non sono stati ancora combinati
+    for(j in vett_n_componenti[-(1:posizione)]){
+      plot(matrice_corr[,i], matrice_corr[,j], xlim=c(-1,1), ylim=c(-1,1),asp=1,xlab=paste(i,"° asse", sep = ""),ylab=paste(j,"° asse", sep = ""), main = paste("Correlazione tra variabili e componenti principali",i,"e",j))
+      abline(h=0, v=0)
+      symbols(0,0, circles = 1, inches =F, add=T)
+      text(matrice_corr[,i], matrice_corr[,j], pos=3, labels=colnames(st_dataset),cex=0.8)
+      symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
+    }
+    posizione <- posizione+1
+  }
+}
+# dove matr_proiezione è la matrice in cui ogni vettore ha ora coordinate sulle componenti principali
+# dove vett gruppi è un vettore di lunghezza = altezza del dataset; contenente le divisioni in n gruppi tramite cluster o assegnazione manuale. I gruppi iniziano da 1 e vanno fino a n
+# Dove vett n componenti è il vettore contenenti le componenti da combinare. Tipo 1:3 o 2:5 o c(2,3,6,9)
+# dove titolo è il titolo degli scatter plot
+# dove sottotitolo è il sottotitolo
+# dove vett_legend è un vettore in cui ci sono i nomi da assegnare ai gruppi nella legenda ordinati
+scatter_plot <- function(matr_proiezione, vett_gruppi, vett_n_componenti, dataset,titolo = "", sottotitolo = "", vett_legend = paste("Gruppo", 1:length(table(vett_gruppi)))){
+  numero_divisioni = length(table(vett_gruppi))
+    posizione <- 1
+    for(i in vett_n_componenti){
+      # Itero negli elementi che non sono stati ancora combinati
+      for(j in vett_n_componenti[-(1:posizione)]){
+        # Creo un vettore in cui al posto dell'indice del gruppo ho un numero maggiore di 16 (forme per pch)
+        vett_livelli_pch = c(16:(16+numero_divisioni))[vett_gruppi]
+        vett_livelli_col = hcl.colors(numero_divisioni, "viridis")[vett_gruppi]
+        plot(
+          matr_proiezione[,i],
+          matr_proiezione[,j],
+          xlab=paste(i,"° componente", sep = ""),
+          ylab=paste(j,"° componente", sep = ""), 
+          pch= vett_livelli_pch, 
+          col = vett_livelli_col,
+          cex=1.5, 
+          main= titolo, 
+          sub = sottotitolo
+          )
+        abline(h=0, v=0)
+        legend("bottomright", 
+               legend=vett_legend, 
+               pch=c(16:(16+numero_divisioni)), 
+               col=hcl.colors(numero_divisioni, "viridis")
+               )
+      }
+      posizione <- posizione+1
+    }
+}
+
+
 # Imprto il dataframe
 olives <- classifly::olives
 # Per utilità, ordino il dataset da sud verso nord e poi alla fine aggiungo la sardegna.
@@ -78,6 +132,8 @@ abline(h=0, v=0)
 symbols(0,0, circles = 1, inches =F, add=T)
 text(corr_var_comp[,1], corr_var_comp[,2], pos=3, labels=colnames(st_q_olives),cex=0.8)
 symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
+
+cerchio_correlazione(corr_var_comp,st_q_olives,1:3)
 
 ##fedeltà dela rappresentazione delle singoe variabili sul primo piano fattoriale
 qual_12 = corr_var_comp[,1]^2+corr_var_comp[,2]^2
