@@ -27,7 +27,7 @@ scatter_plot <- function(matr_proiezione, vett_gruppi, vett_n_componenti, datase
       # Itero negli elementi che non sono stati ancora combinati
       for(j in vett_n_componenti[-(1:posizione)]){
         # Creo un vettore in cui al posto dell'indice del gruppo ho un numero maggiore di 16 (forme per pch)
-        vett_livelli_pch = c(16:(16+numero_divisioni))[vett_gruppi]
+        vett_livelli_pch = c(15:(15+numero_divisioni))[vett_gruppi]
         vett_livelli_col = hcl.colors(numero_divisioni, "viridis")[vett_gruppi]
         plot(
           matr_proiezione[,i],
@@ -36,20 +36,23 @@ scatter_plot <- function(matr_proiezione, vett_gruppi, vett_n_componenti, datase
           ylab=paste(j,"° componente", sep = ""), 
           pch= vett_livelli_pch, 
           col = vett_livelli_col,
-          cex=1.5, 
+          bg = vett_livelli_col, 
           main= titolo, 
-          sub = sottotitolo
+          sub = sottotitolo,
           )
         abline(h=0, v=0)
         legend("bottomright", 
                legend=vett_legend, 
-               pch=c(16:(16+numero_divisioni)), 
+               pch=c(15:(15+numero_divisioni)), 
+              pt.bg = hcl.colors(numero_divisioni, "viridis"),
                col=hcl.colors(numero_divisioni, "viridis")
                )
       }
       posizione <- posizione+1
     }
 }
+
+
 
 
 # Imprto il dataframe
@@ -126,49 +129,26 @@ colnames(corr_var_comp) = paste("C",1:8,sep="")
 View(corr_var_comp)
 
 
-##disegno il grafico delle comp 1 e 2
-plot(corr_var_comp[,1],corr_var_comp[,2],ylim=c(-1,1), xlim=c(-1,1),asp=1,xlab="primo asse",ylab="secondo asse", main = "Grafico delle variabili")
-abline(h=0, v=0)
-symbols(0,0, circles = 1, inches =F, add=T)
-text(corr_var_comp[,1], corr_var_comp[,2], pos=3, labels=colnames(st_q_olives),cex=0.8)
-symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
-
+##disegno il grafico delle componenti da 1 a 3
 cerchio_correlazione(corr_var_comp,st_q_olives,1:3)
 
 ##fedeltà dela rappresentazione delle singoe variabili sul primo piano fattoriale
 qual_12 = corr_var_comp[,1]^2+corr_var_comp[,2]^2
 View(qual_12)
-
-
-##disegno il grafico delle componenti 1 e 3
-plot(corr_var_comp[,1],corr_var_comp[,3], xlim=c(-1,1), ylim=c(-1,1),asp=1,xlab="primo asse",ylab="terzo asse", main = "Grafico delle variabili")
-abline(h=0, v=0)
-symbols(0,0, circles = 1, inches =F, add=T)
-text(corr_var_comp[,1], corr_var_comp[,3], pos=3, labels=colnames(st_q_olives),cex=0.8)
-symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
-
-##disegno il grafico delle componenti 1 e 3 
-plot(corr_var_comp[,2],corr_var_comp[,3], xlim=c(-1,1), ylim=c(-1,1),asp=1,xlab="secondo asse",ylab="terzo asse", main = "Grafico delle variabili")
-abline(h=0, v=0)
-symbols(0,0, circles = 1, inches =F, add=T)
-text(corr_var_comp[,2], corr_var_comp[,3], pos=3, labels=colnames(st_q_olives),cex=0.8)
-symbols(0, 0, circles=0.8, inches = F, fg= "blue", add=T)
-
-##grafico delle unità sperimentali per la prima e la seconda componente
-plot(pca_olives$scores[,1],pca_olives$scores[,2], xlab="prima componente", ylab="seconda componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
-abline(h=0, v=0)
-legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
-
-##grafico delle unità sperimentali per la prima e la terza componente
-plot(pca_olives$scores[,1],pca_olives$scores[,3], xlab="prima componente", ylab="terza componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
-abline(h=0, v=0)
-legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
-
-##grafico delle unità sperimentali per la seconda e la terza componente
-plot(pca_olives$scores[,2],pca_olives$scores[,3], xlab="seconda componente", ylab="terza componente", pch=c(16,17,15)[olives$Region], col = c("red", "blue", "darkgreen")[olives$Region], cex=1.5, main= "Grafico gli oli per zona geografica")
-abline(h=0, v=0)
-legend("bottomright", legend=c("nord","centro","sud"), pch=c(16,17,15), col=c("red","blue", "darkgreen"))
+qual_13 = corr_var_comp[,1]^2+corr_var_comp[,3]^2
+View(qual_13)
+qual_23 = corr_var_comp[,2]^2+corr_var_comp[,3]^2
+View(qual_23)
 
 
 
+##grafico delle unità sperimentali per le componenti secondo il raggruppamento in zone
+vett_gruppi = c(1,2,3)[olives$Region]
+scatter_plot(pca_olives$scores, vett_gruppi, 1:3, st_q_olives, vett_legend = c("Sud","Sardegna","Nord"))
 
+
+##grafico delle unità sperimentali per le componenti secondo il raggruppamento in regioni
+vett_gruppi = c(2,8,7,9,4,1,3,5,6)[olives$Area]
+scatter_plot(pca_olives$scores, vett_gruppi, 1:3, st_q_olives, vett_legend = c("Sicilia", "Calabria","Sud Puglia", "Nord Puglia", "Umbria","Liguria Ovest", "Liguria Est", "Costa Sarda","Entroterra Sardo"))
+
+             
