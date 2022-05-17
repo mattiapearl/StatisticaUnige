@@ -52,6 +52,44 @@ scatter_plot <- function(matr_proiezione, vett_gruppi, vett_n_componenti, datase
     }
 }
 
+best_rappr <-  function(matrice_corr){
+  posizione <- 1
+  posizione_in_matr <- 1
+  tot_colonne <- sum(1:(ncol(matrice_corr)-1))+2
+  matrice_qual_rappr <- matrix(0, 
+                               nrow(matrice_corr),
+                               tot_colonne
+                               )
+  
+  rownames(matrice_qual_rappr) = rownames(matrice_corr) 
+  colnames(matrice_qual_rappr) = 1:tot_colonne
+  colnames(matrice_qual_rappr)[tot_colonne-1] = "Top rappr."
+  colnames(matrice_qual_rappr)[tot_colonne] = "Valore Top"
+  for(i in 1:ncol(matrice_corr)){
+    # Itero negli elementi che non sono stati ancora 
+
+      for(j in (1:ncol(matrice_corr))[-(1:posizione)]){
+        qual = round(sqrt(matrice_corr[,i]^2+matrice_corr[,j]^2),3)
+        matrice_qual_rappr[,posizione_in_matr] = qual
+        nome_colonna <- paste("Comp",i,"e",j)
+        #Trova quale sia il migliore
+        for(k in 1:length(qual)){
+          qual_riga = qual[k]
+          max_riga = matrice_qual_rappr[k,tot_colonne]
+          if(qual_riga>max_riga){
+            matrice_qual_rappr[k,tot_colonne] = qual[k]
+            matrice_qual_rappr[k,tot_colonne-1] = nome_colonna
+          }
+        }
+        
+        colnames(matrice_qual_rappr)[posizione_in_matr] = nome_colonna
+        posizione_in_matr <- posizione_in_matr+1
+      }
+
+    posizione <- posizione+1
+  }
+  return(matrice_qual_rappr)
+}
 
 
 
@@ -133,7 +171,7 @@ View(corr_var_comp)
 cerchio_correlazione(corr_var_comp,st_q_olives,1:3)
 
 ##fedeltà dela rappresentazione delle singoe variabili sul primo piano fattoriale
-qual_12 = corr_var_comp[,1]^2+corr_var_comp[,2]^2
+qual_12 = sqrt(corr_var_comp[,1]^2+corr_var_comp[,2]^2)
 View(qual_12)
 qual_13 = corr_var_comp[,1]^2+corr_var_comp[,3]^2
 View(qual_13)
