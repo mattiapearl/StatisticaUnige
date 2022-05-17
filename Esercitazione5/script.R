@@ -171,12 +171,7 @@ View(corr_var_comp)
 cerchio_correlazione(corr_var_comp,st_q_olives,1:3)
 
 ##fedeltà dela rappresentazione delle singoe variabili sul primo piano fattoriale
-qual_12 = sqrt(corr_var_comp[,1]^2+corr_var_comp[,2]^2)
-View(qual_12)
-qual_13 = corr_var_comp[,1]^2+corr_var_comp[,3]^2
-View(qual_13)
-qual_23 = corr_var_comp[,2]^2+corr_var_comp[,3]^2
-View(qual_23)
+best_rappr(corr_var_comp)
 
 
 
