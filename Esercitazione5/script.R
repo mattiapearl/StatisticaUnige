@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dove vett n componenti è il vettore contenenti le componenti da combinare. Tipo 1:3 o 2:5 o c(2,3,6,9)
 # Dove matrice_corr è la matrice della correlazione tra le variabili e la loro proiezione sulle componenti principali
 cerchio_correlazione <- function(matrice_corr, st_dataset, vett_n_componenti){
@@ -199,6 +200,28 @@ best_rappr <- function(matrice_corr){
 
 
 # Imprto il dataframe
+=======
+info_cluster <-  function(dataset_std, cluster, numclassi){
+  dataset_std <- as.data.frame(dataset_std)
+  dist_int_medie = c(1:numclassi); dist_int_max= c(1:numclassi); inerzie_int_medie = c(1:numclassi)
+  gruppi = cutree(cluster, k=numclassi)
+  
+  for(i in 1:numclassi){
+    a <- rowSums(scale(dataset_std[gruppi==i,],scale = F)^2)
+    dist_int_medie[i] = mean(sqrt(a))
+    dist_int_max[i] = max(sqrt(a))
+    inerzie_int_medie[i] = mean(a)
+  }
+  compattezza = cbind(table(gruppi),dist_int_medie, dist_int_max,inerzie_int_medie)
+  colnames(compattezza)[1] = "n"
+  inerzia_tot = (dim(dataset_std)[1]-1)*dim(dataset_std)[2]
+  inerzia_int = sum(inerzie_int_medie*table(gruppi))
+  percent_inerzia_fra= round((inerzia_tot - inerzia_int)/inerzia_tot*100,2)
+  return(list(compattezza,inerzia_tot,inerzia_int,percent_inerzia_fra))
+}
+
+# Importo il dataframe
+>>>>>>> 2351f74ca1fecf0d5d262f35b75a6c7568cb5cea
 olives <- classifly::olives
 # Per utilità, ordino il dataset da sud verso nord e poi alla fine aggiungo la sardegna.
 # Il processo è tedioso, ma risulta nell'utilizzare la funzione order su un manualmente "ri" numerato factor dell'Area
@@ -299,6 +322,28 @@ aggreg_kmeans9$cluster = c(4,2,7,9,8,6,3,1,5)[aggreg_kmeans9$cluster]
 gruppo_plot_reg_area(perc_olives, aggreg_kmeans9$cluster,"Kmeans - 9")
 par(mfrow = c(1,1),mar=c(4,4,2.5,2.5))
 scatter_plot(pca_olives$scores, aggreg_kmeans9$cluster, 1:3, st_q_olives,titolo = "Scatter plot rispetto alle componenti per Kmeans9")
+
+
+### cluster analysis con il metodo di ward e la ditanza euclidea
+matrice_osservazioni = as.matrix(q_olives)
+##standardizzo le variabili
+matrice_osservazioni = scale (matrice_osservazioni)
+##calcolo le distanze con il metodo della distanza euclidea
+ed1_o = as.matrix(dist(matrice_osservazioni, method = "euclidean") , nrow= 572)
+##aggrego con il metodo di ward
+aggreg_w2eucl = hclust(as.dist(ed1_o), method ="ward.D2")
+##creo nove gruppi 
+gruppi_euclW = cutree(aggreg_w2eucl, k=9)
+
+##informazioni sul raggruppamento appena eseguito 
+info_cluster(st_q_olives,aggreg_w2eucl, 9)
+
+
+##cose da fare:
+##immagine matrice distanza variabili 
+##immagine matrice ditanza variabili e comp princ
+##grafico unità sperimentali per gruppi 
+##grafico unità sperimentali con scrito regioni
 
 
 
